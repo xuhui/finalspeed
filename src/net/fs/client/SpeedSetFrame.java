@@ -2,21 +2,12 @@
 
 package net.fs.client;
 
-import java.awt.Dialog;
-import java.awt.Insets;
+import net.miginfocom.swing.MigLayout;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
-import net.fs.utils.MLog;
-import net.miginfocom.swing.MigLayout;
 
 public class SpeedSetFrame extends JDialog{
 

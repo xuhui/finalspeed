@@ -2,26 +2,22 @@
 
 package net.fs.rudp;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Vector;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import net.fs.cap.CapEnv;
 import net.fs.cap.VDatagramSocket;
 import net.fs.rudp.message.MessageType;
 import net.fs.utils.ByteIntConvert;
-import net.fs.utils.MLog;
+import net.fs.utils.ConsoleLogger;
 import net.fs.utils.MessageCheck;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.*;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 
 public class Route {
@@ -125,7 +121,7 @@ public class Route {
 			}
 		}else {
 			if(mode==2){
-				MLog.info("Listen udp port: "+CapEnv.toUnsigned(routePort));
+				ConsoleLogger.info("Listen udp port: " + CapEnv.toUnsigned(routePort));
 				ds=new DatagramSocket(CapEnv.toUnsigned(routePort));
 			}else {
 				ds=new DatagramSocket();

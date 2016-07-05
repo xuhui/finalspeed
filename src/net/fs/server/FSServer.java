@@ -6,7 +6,7 @@ package net.fs.server;
 
 import net.fs.rudp.ConnectionProcessor;
 import net.fs.rudp.Route;
-import net.fs.utils.MLog;
+import net.fs.utils.ConsoleLogger;
 
 import java.io.*;
 import java.net.BindException;
@@ -31,9 +31,9 @@ public class FSServer {
 		} catch (Exception e) {
 			e.printStackTrace();
 			if(e instanceof BindException){
-				MLog.println("Udp port already in use.");
+				ConsoleLogger.println("Udp port already in use.");
 			}
-			MLog.println("Start failed.");
+			ConsoleLogger.println("Start failed.");
 			System.exit(0);
 		}
 	}
@@ -43,9 +43,9 @@ public class FSServer {
 	}
 
 	private FSServer() throws Exception {
-		MLog.info("");
-		MLog.info("FinalSpeed server starting... ");
-		MLog.info("System Name: " + systemName);
+		ConsoleLogger.info("");
+		ConsoleLogger.info("FinalSpeed server starting... ");
+		ConsoleLogger.info("System Name: " + systemName);
 		udpServer = this;
 		final MapTunnelProcessor mp = new MapTunnelProcessor();
 

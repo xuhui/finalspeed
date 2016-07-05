@@ -2,18 +2,18 @@
 
 package net.fs.rudp;
 
+import net.fs.rudp.message.PingMessage;
+import net.fs.rudp.message.PingMessage2;
+import net.fs.utils.ByteIntConvert;
+import net.fs.utils.ConsoleLogger;
+import net.fs.utils.MessageCheck;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
-
-import net.fs.rudp.message.PingMessage;
-import net.fs.rudp.message.PingMessage2;
-import net.fs.utils.ByteIntConvert;
-import net.fs.utils.MLog;
-import net.fs.utils.MessageCheck;
 
 public class ClientControl {
 	
@@ -113,7 +113,7 @@ public class ClientControl {
 					protocal="udp";
 				}
 				//MLog.println("    receive_ping222: "+pm.getPingId()+" "+new Date());
-				MLog.println("delay_"+protocal+" "+pingDelay+"ms "+dp.getAddress().getHostAddress()+":"+dp.getPort());
+				ConsoleLogger.println("delay_" + protocal + " " + pingDelay + "ms " + dp.getAddress().getHostAddress() + ":" + dp.getPort());
 			}
 		}
 	}
