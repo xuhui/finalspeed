@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class Route {
 
 	private DatagramSocket ds;
-	public HashMap<Integer, ConnectionUDP> connTable;
+	public Map<Integer, ConnectionUDP> connTable;
 	Route route;
 	Thread mainThread;
 	Thread reveiveThread;
@@ -41,14 +41,14 @@ public class Route {
 	public int localclientId=Math.abs(ran.nextInt());
 
 	LinkedBlockingQueue<DatagramPacket> packetBuffer=new LinkedBlockingQueue<DatagramPacket>();
-	
-	public static int mode_server=2;
-	
-	public static int mode_client=1;
 
-	public int mode=mode_client;//1客户端,2服务端
-	
-	String pocessName="";
+	public static final int MODE_SERVER = 2;
+
+	public static final int MODE_CLIENT = 1;
+
+	public int mode = MODE_CLIENT;//1客户端,2服务端
+
+	String processorName = "";
 
 	HashSet<Integer> setedTable=new HashSet<Integer>();
 
@@ -82,14 +82,14 @@ public class Route {
 		ThreadPoolExecutor executor = new ThreadPoolExecutor(100, Integer.MAX_VALUE, 10*1000, TimeUnit.MILLISECONDS, queue); 
 		es=executor;
 	}
-	
-	public Route(String pocessName,short routePort,int mode2,boolean tcp,boolean tcpEnvSuccess) throws Exception{
-		
-		this.mode=mode2;
+
+	public Route(String processorName, short routePort, int mode, boolean tcp, boolean tcpEnvSuccess) throws Exception {
+
+		this.mode = mode;
 		useTcpTun=tcp;
-		this.pocessName=pocessName;
+		this.processorName = processorName;
 		if(useTcpTun){
-			if(mode==2){
+			if (this.mode == 2) {
 				//服务端
 				VDatagramSocket d=new VDatagramSocket(routePort);
 				d.setClient(false);
@@ -120,15 +120,15 @@ public class Route {
 				ds=d;
 			}
 		}else {
-			if(mode==2){
-				ConsoleLogger.info("Listen udp port: " + CapEnv.toUnsigned(routePort));
-				ds=new DatagramSocket(CapEnv.toUnsigned(routePort));
+			if (this.mode == Route.MODE_SERVER) {
+				ConsoleLogger.info("Listen udp port: " + routePort);
+				ds = new DatagramSocket(routePort);
 			}else {
 				ds=new DatagramSocket();
 			}
 		}
-		
-		connTable=new HashMap<Integer, ConnectionUDP>();
+
+		connTable = new HashMap<>();
 		clientManager=new ClientManager(this);
 		reveiveThread=new Thread(){
 			@Override
@@ -188,10 +188,10 @@ public class Route {
 						if(sType==net.fs.rudp.message.MessageType.sType_PingMessage
 								||sType==net.fs.rudp.message.MessageType.sType_PingMessage2){
 							ClientControl clientControl=null;
-							if(mode==2){
+							if (Route.this.mode == 2) {
 								//发起
 								clientControl=clientManager.getClientControl(remote_clientId,dp.getAddress(),dp.getPort());
-							}else if(mode==1){
+							} else if (Route.this.mode == 1) {
 								//接收
 								String key=dp.getAddress().getHostAddress()+":"+dp.getPort();
 								int sim_clientId=Math.abs(key.hashCode());
@@ -200,7 +200,7 @@ public class Route {
 							clientControl.onReceivePacket(dp);
 						}else {
 							//发起
-							if(mode==1){
+							if (Route.this.mode == 1) {
 								if(!setedTable.contains(remote_clientId)){
 									String key=dp.getAddress().getHostAddress()+":"+dp.getPort();
 									int sim_clientId=Math.abs(key.hashCode());
@@ -221,7 +221,7 @@ public class Route {
 
 
 							//udp connection
-							if(mode==2){
+							if (Route.this.mode == 2) {
 								//接收
 								try {
 									getConnection2(dp.getAddress(),dp.getPort(),connectId,remote_clientId);
@@ -271,7 +271,7 @@ public class Route {
 	public ConnectionProcessor createTunnelProcessor(){
 		ConnectionProcessor o=null;
 		try {
-			Class onwClass = Class.forName(pocessName);
+			Class onwClass = Class.forName(processorName);
 			o = (ConnectionProcessor) onwClass.newInstance();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

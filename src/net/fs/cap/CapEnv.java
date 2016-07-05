@@ -214,7 +214,7 @@ public class CapEnv {
 			String filter="";
 			if(!client){
 				//服务端
-				filter="tcp dst port "+toUnsigned(listenPort);
+				filter = "tcp dst port " + listenPort;
 			}else{
 				//客户端
 				filter="tcp";
@@ -526,7 +526,7 @@ public class CapEnv {
 	public void setListenPort(short listenPort) {
 		this.listenPort = listenPort;
 		if(!client){
-			ConsoleLogger.info("Listen tcp port: " + toUnsigned(listenPort));
+			ConsoleLogger.info("Listen tcp port: " + listenPort);
 		}
 	}
 	

@@ -83,13 +83,13 @@ public class MapClient implements Trafficlistener{
 			System.exit(0);
 		}
 		try {
-			route_tcp = new Route(null,routePort,Route.mode_client,true,tcpEnvSuccess);
+			route_tcp = new Route(null, routePort, Route.MODE_CLIENT, true, tcpEnvSuccess);
 		} catch (Exception e1) {
 			//e1.printStackTrace();
 			throw e1;
 		}
 		try {
-			route_udp = new Route(null,routePort,Route.mode_client,false,tcpEnvSuccess);
+			route_udp = new Route(null, routePort, Route.MODE_CLIENT, false, tcpEnvSuccess);
 		} catch (Exception e1) {
 			//e1.printStackTrace();
 			throw e1;
