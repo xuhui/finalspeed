@@ -4,18 +4,12 @@
 
 package net.fs.server;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.BindException;
-
 import net.fs.rudp.ConnectionProcessor;
 import net.fs.rudp.Route;
 import net.fs.utils.MLog;
+
+import java.io.*;
+import java.net.BindException;
 
 public class FSServer {
 
@@ -48,7 +42,7 @@ public class FSServer {
 		return udpServer;
 	}
 
-	public FSServer() throws Exception {
+	private FSServer() throws Exception {
 		MLog.info("");
 		MLog.info("FinalSpeed server starting... ");
 		MLog.info("System Name: " + systemName);
