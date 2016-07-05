@@ -136,10 +136,10 @@ public class ClientControl {
 			connTable.remove(conn.connectId);
 		}
 	}
-	
-	public void close(){
+
+    //todo need to optimize
+    public void close(){
 		closed=true;
-		route.clientManager.removeClient(clientId);
 		synchronized (syn_connTable) {
 			Iterator<Integer> it=getConnTableIterator();
 			while(it.hasNext()){
