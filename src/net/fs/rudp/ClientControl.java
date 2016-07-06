@@ -4,7 +4,6 @@ package net.fs.rudp;
 
 import net.fs.rudp.message.PingMessage;
 import net.fs.rudp.message.PingMessage2;
-import net.fs.utils.ByteIntConvert;
 import net.fs.utils.ConsoleLogger;
 import net.fs.utils.MessageCheck;
 
@@ -62,10 +61,7 @@ public class ClientControl {
     }
 
     public void onReceivePacket(DatagramPacket dp) {
-        byte[] dpData = dp.getData();
-        int sType = 0;
-        sType = MessageCheck.checkSType(dp);
-        int remote_clientId = ByteIntConvert.toInt(dpData, 8);
+        int sType = MessageCheck.checkSType(dp);
         if (sType == net.fs.rudp.message.MessageType.sType_PingMessage) {
             PingMessage pm = new PingMessage(dp);
             sendPingMessage2(pm.getPingId(), dp.getAddress(), dp.getPort());

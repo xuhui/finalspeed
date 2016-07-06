@@ -23,7 +23,6 @@ class MapTunnelProcessor implements ConnectionProcessor {
 
     ConnectionUDP conn;
 
-
     UDPInputStream tis;
 
     UDPOutputStream tos;
@@ -35,13 +34,8 @@ class MapTunnelProcessor implements ConnectionProcessor {
     public void process(final ConnectionUDP conn) {
         this.conn = conn;
         pc = this;
-        Route.es.execute(new Runnable() {
-            public void run() {
-                process();
-            }
-        });
+        Route.es.execute(() -> process());
     }
-
 
     void process() {
 
@@ -74,32 +68,25 @@ class MapTunnelProcessor implements ConnectionProcessor {
             final Pipe p1 = new Pipe();
             final Pipe p2 = new Pipe();
 
-            Route.es.execute(new Runnable() {
-
-                public void run() {
-                    try {
-                        p1.pipe(sis, tos, 100 * 1024, p2);
-                    } catch (Exception e) {
-                        //e.printStackTrace();
-                    } finally {
-                        close();
-                        if (p1.getReadedLength() == 0) {
-                            ConsoleLogger.println("端口" + dstPort + "无返回数据");
-                        }
+            Route.es.execute(() -> {
+                try {
+                    p1.pipe(sis, tos, 100 * 1024, p2);
+                } catch (Exception e) {
+                    //e.printStackTrace();
+                } finally {
+                    close();
+                    if (p1.getReadedLength() == 0) {
+                        ConsoleLogger.println("端口" + dstPort + "无返回数据");
                     }
                 }
-
             });
-            Route.es.execute(new Runnable() {
-
-                public void run() {
-                    try {
-                        p2.pipe(tis, sos, 100 * 1024 * 1024, conn);
-                    } catch (Exception e) {
-                        //e.printStackTrace();
-                    } finally {
-                        close();
-                    }
+            Route.es.execute(() -> {
+                try {
+                    p2.pipe(tis, sos, 100 * 1024 * 1024, conn);
+                } catch (Exception e) {
+                    //e.printStackTrace();
+                } finally {
+                    close();
                 }
             });
 

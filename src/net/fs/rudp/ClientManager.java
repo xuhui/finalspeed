@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class ClientManager {
+class ClientManager {
 
     private Map<Integer, ClientControl> clientTable = new ConcurrentHashMap<>();
 
@@ -18,7 +18,7 @@ public class ClientManager {
 
     private static final int SEND_PING_INTERVAL = 1_000;
 
-    Route route;
+    private Route route;
 
     ClientManager(Route route) {
         this.route = route;// todo check if used
