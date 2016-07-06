@@ -15,10 +15,44 @@ public class FSServer {
     private static final String SYSTEM_NAME = System.getProperty("os.name").toLowerCase();
 
     private static short routePort = 150;
-
-    Route route_udp, route_tcp;
-
     boolean success_firewall_windows = true;
+    private Route route_udp, route_tcp;
+
+    private FSServer() throws Exception {
+
+        ConsoleLogger.info("FinalSpeed Server Starting...");
+        ConsoleLogger.info("System Name:" + SYSTEM_NAME);
+
+        MapTunnelProcessor mp = new MapTunnelProcessor();
+
+        //todo read port from the configuration file and set
+
+        route_udp = new Route(mp.getClass().getName(), routePort, Route.MODE_SERVER, false, true);
+        if (SYSTEM_NAME.equals("linux")) {
+            startFirewall_linux();
+            setFireWall_linux_udp();
+        } else if (SYSTEM_NAME.contains("windows")) {
+            startFirewall_windows();
+        }
+
+        Route.es.execute(() -> {
+            try {
+                route_tcp = new Route(mp.getClass().getName(), (short) routePort, Route.MODE_SERVER, true, true);
+                if (SYSTEM_NAME.equals("linux")) {
+                    setFireWall_linux_tcp();
+                } else if (SYSTEM_NAME.contains("windows")) {
+                    if (success_firewall_windows) {
+                        setFireWall_windows_tcp();
+                    } else {
+                        System.out.println("启动windows防火墙失败,请先运行防火墙服务.");
+                    }
+                }
+            } catch (Exception e) {
+                // e.printStackTrace();
+            }
+        });
+
+    }
 
     public static void main(String[] args) {
         try {
@@ -31,46 +65,6 @@ public class FSServer {
             ConsoleLogger.println("Start failed.");
             System.exit(0);
         }
-    }
-
-    private FSServer() throws Exception {
-
-        ConsoleLogger.info("FinalSpeed Server Starting...");
-        ConsoleLogger.info("System Name:" + SYSTEM_NAME);
-
-        final MapTunnelProcessor mp = new MapTunnelProcessor();
-
-        //todo read port from the configuration file and set
-
-        route_udp = new Route(mp.getClass().getName(), routePort, Route.MODE_SERVER, false, true);
-        if (SYSTEM_NAME.equals("linux")) {
-            startFirewall_linux();
-            setFireWall_linux_udp();
-        } else if (SYSTEM_NAME.contains("windows")) {
-            startFirewall_windows();
-        }
-
-        Route.es.execute(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    route_tcp = new Route(mp.getClass().getName(), (short) routePort, Route.MODE_SERVER, true, true);
-                    if (SYSTEM_NAME.equals("linux")) {
-                        setFireWall_linux_tcp();
-                    } else if (SYSTEM_NAME.contains("windows")) {
-                        if (success_firewall_windows) {
-                            setFireWall_windows_tcp();
-                        } else {
-                            System.out.println("启动windows防火墙失败,请先运行防火墙服务.");
-                        }
-                    }
-                } catch (Exception e) {
-                    // e.printStackTrace();
-                }
-            }
-        });
-
     }
 
     void startFirewall_windows() {
