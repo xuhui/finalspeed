@@ -16,11 +16,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Properties;
 import java.util.StringTokenizer;
 
 public class ClientUI implements ClientUII, WindowListener {
@@ -49,12 +47,6 @@ public class ClientUI implements ClientUII, WindowListener {
 
     private SystemTray tray;
 
-    int serverVersion = -1;
-
-    int localVersion = 5;
-
-    boolean checkingUpdate = false;
-
     String domain = "";
 
     String homeUrl;
@@ -62,8 +54,6 @@ public class ClientUI implements ClientUII, WindowListener {
     public static ClientUI ui;
 
     JTextField text_ds, text_us;
-
-    boolean ky = true;
 
     String errorMsg = "保存失败请检查输入信息!";
 
@@ -73,7 +63,6 @@ public class ClientUI implements ClientUII, WindowListener {
 
     public MapRuleListTable tcpMapRuleListTable;
 
-    boolean capSuccess = false;
     Exception capException = null;
     boolean b1 = false;
 
@@ -100,12 +89,6 @@ public class ClientUI implements ClientUII, WindowListener {
     LogOutputStream los;
     
     boolean tcpEnable=true;
-    
-    {
-        domain = "ip4a.com";
-        homeUrl = "http://www.ip4a.com/?client_fs";
-        updateUrl = "http://fs.d1sm.net/finalspeed/update.properties";
-    }
 
     ClientUI(final boolean isVisible,boolean min) {
     	this.min=min;
@@ -116,8 +99,7 @@ public class ClientUI implements ClientUII, WindowListener {
              System.setOut(los);
              System.setErr(los);
         }
-        
-        
+
         systemName = System.getProperty("os.name").toLowerCase();
         ConsoleLogger.info("System: " + systemName + " " + System.getProperty("os.version"));
         ui = this;
@@ -425,10 +407,6 @@ public class ClientUI implements ClientUII, WindowListener {
         JPanel p5 = new JPanel();
         p5.setLayout(new MigLayout("insets 5 0 0 0 "));
         mainPanel.add(p5, "align right");
-        JButton button_fsa = createButton_Link("FS高级版","http://www.xsocks.me/?fsc");
-        p5.add(button_fsa);
-        JButton button_wlt = createButton_Link("网络通内网穿透","http://www.youtusoft.com/?fsc");
-        p5.add(button_wlt);
 
         downloadSpeedField = new JLabel();
         downloadSpeedField.setHorizontalAlignment(JLabel.RIGHT);
@@ -622,14 +600,6 @@ public class ClientUI implements ClientUII, WindowListener {
 
         mapClient.setMapServer(config.getServerAddress(), config.getServerPort(), config.getRemotePort(), null, null, config.isDirect_cn(), config.getProtocal().equals("tcp"),
                 null);
-
-        Route.executor.execute(new Runnable() {
-
-            @Override
-            public void run() {
-                checkUpdate();
-            }
-        });
 
         setSpeed(config.getDownloadSpeed(), config.getUploadSpeed());
         if (isVisible&!min) {
@@ -1065,42 +1035,6 @@ public class ClientUI implements ClientUII, WindowListener {
         return button;
     }
     
-
-    boolean haveNewVersion() {
-        return serverVersion > localVersion;
-    }
-
-    public void checkUpdate() {
-        for (int i = 0; i < 3; i++) {
-            checkingUpdate = true;
-            try {
-                Properties propServer = new Properties();
-                HttpURLConnection uc = Tools.getConnection(updateUrl);
-                uc.setUseCaches(false);
-                InputStream in = uc.getInputStream();
-                propServer.load(in);
-                serverVersion = Integer.parseInt(propServer.getProperty("version"));
-                break;
-            } catch (Exception e) {
-                e.printStackTrace();
-                try {
-                    Thread.sleep(3 * 1000);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
-            } finally {
-                checkingUpdate = false;
-            }
-        }
-        if (this.haveNewVersion()) {
-            int option = JOptionPane.showConfirmDialog(mainFrame, "发现新版本,立即更新吗?", "提醒", JOptionPane.WARNING_MESSAGE);
-            if (option == JOptionPane.YES_OPTION) {
-                openUrl(homeUrl);
-            }
-        }
-
-    }
-
     void initUI() {
         SwingUtilities.invokeLater(new Runnable() {
 

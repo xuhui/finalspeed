@@ -15,7 +15,10 @@ import org.pcap4j.packet.TcpPacket.TcpHeader;
 import org.pcap4j.util.MacAddress;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -157,8 +160,8 @@ public class CapEnv {
 
     }
 
-    PromiscuousMode getMode(PcapNetworkInterface pi) {
-        PromiscuousMode mode = null;
+    private PromiscuousMode getMode(PcapNetworkInterface pi) {
+        PromiscuousMode mode;
         String string = (pi.getDescription() + ":" + pi.getName()).toLowerCase();
         if (string.contains("wireless")) {
             mode = PromiscuousMode.NONPROMISCUOUS;
@@ -261,8 +264,9 @@ public class CapEnv {
             return;
         }
 
-        for (final PcapNetworkInterface pi : allDevs) {
+        for (final PcapNetworkInterface pi : allDevs)
             try {
+                //todo need to optimize snaplen and timeoutMillis
                 final PcapHandle handle = pi.openLive(SNAPLEN, getMode(pi), READ_TIMEOUT);
                 handleTable.put(pi, handle);
                 final PacketListener listener = new PacketListener() {
@@ -302,7 +306,8 @@ public class CapEnv {
                                         }
                                         //MLog.println("local_mac_tcp1 "+gateway_mac+" gateway_mac "+gateway_mac+" local_ipv4 "+local_ipv4);
                                     }
-                                    if (ipV4Header.getDstAddr().getHostAddress().equals(testIp_tcp)) {
+                                    String dstHostAddress = ipV4Header.getDstAddr().getHostAddress();
+                                    if (testIp_tcp.equals(dstHostAddress) || testIp_udp.equals(dstHostAddress)) {
                                         local_mac = head_eth.getSrcAddr();
                                         gateway_mac = head_eth.getDstAddr();
                                         local_ipv4 = ipV4Header.getSrcAddr();
@@ -310,20 +315,7 @@ public class CapEnv {
                                         if (pi.getDescription() != null) {
                                             selectedInterfaceDes = pi.getDescription();
                                         }
-                                        //MLog.println("local_mac_tcp2 local_mac "+local_mac+" gateway_mac "+gateway_mac+" local_ipv4 "+local_ipv4);
                                     }
-                                    //udp
-                                    if (ipV4Header.getDstAddr().getHostAddress().equals(testIp_udp)) {
-                                        local_mac = head_eth.getSrcAddr();
-                                        gateway_mac = head_eth.getDstAddr();
-                                        local_ipv4 = ipV4Header.getSrcAddr();
-                                        selectedInterfaceName = pi.getName();
-                                        if (pi.getDescription() != null) {
-                                            selectedInterfaceDes = pi.getDescription();
-                                        }
-                                        //MLog.println("local_mac_udp "+gateway_mac+" gateway_mac"+gateway_mac+" local_ipv4 "+local_ipv4);
-                                    }
-
                                 }
                             }
                         } catch (Exception e) {
@@ -333,29 +325,21 @@ public class CapEnv {
                     }
                 };
 
-                Thread thread = new Thread() {
-
-                    public void run() {
-                        try {
-                            handle.loop(COUNT, listener);
-                            PcapStat ps = handle.getStats();
-                            handle.close();
-                        } catch (Exception e) {
-                            //e.printStackTrace();
-                        }
+                new Thread(() -> {
+                    try {
+                        handle.loop(COUNT, listener);
+                        PcapStat ps = handle.getStats();
+                        handle.close();
+                    } catch (Exception e) {
+                        //  e.printStackTrace();
+                        //todo log
                     }
-
-                };
-                thread.start();
+                }).start();
             } catch (PcapNativeException e1) {
-
+                //todo log
             }
 
-        }
-
-        //detectMac_udp();
         detectMac_tcp();
-
 
         Iterator<PcapNetworkInterface> it = handleTable.keySet().iterator();
         while (it.hasNext()) {
@@ -390,20 +374,6 @@ public class CapEnv {
             }
         }
         return ipV4Packet;
-    }
-
-
-    public static String printHexString(byte[] b) {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < b.length; i++) {
-            String hex = Integer.toHexString(b[i] & 0xFF);
-            hex = hex.replaceAll(":", " ");
-            if (hex.length() == 1) {
-                hex = '0' + hex;
-            }
-            sb.append(hex + " ");
-        }
-        return sb.toString();
     }
 
     public void createTcpTun_Client(String dstAddress, short dstPort) throws Exception {
@@ -455,18 +425,12 @@ public class CapEnv {
         testIp_tcp = address.getHostAddress();
         for (int i = 0; i < 5; i++) {
             try {
-                Route.executor.execute(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        try {
-                            Socket socket = new Socket(testIp_tcp, por);
-                            socket.close();
-                        } catch (UnknownHostException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                Route.executor.execute(() -> {
+                    try {
+                        Socket socket = new Socket(testIp_tcp, por);
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 });
                 Thread.sleep(500);
@@ -475,42 +439,8 @@ public class CapEnv {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
             }
         }
-    }
-
-    private void detectMac_udp() {
-        for (int i = 0; i < 10; i++) {
-            try {
-                DatagramSocket ds = new DatagramSocket();
-                DatagramPacket dp = new DatagramPacket(new byte[1000], 1000);
-                dp.setAddress(InetAddress.getByName(testIp_udp));
-                dp.setPort(5555);
-                ds.send(dp);
-                ds.close();
-                Thread.sleep(500);
-                if (local_mac != null) {
-                    break;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }
-
-    }
-
-    public short getListenPort() {
-        return listenPort;
     }
 
     public void setListenPort(short listenPort) {
