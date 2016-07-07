@@ -13,7 +13,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 
-class MapTunnelProcessor implements ConnectionProcessor {
+public class MapTunnelProcessor implements ConnectionProcessor {
 
     Socket dstSocket = null;
 
@@ -34,7 +34,7 @@ class MapTunnelProcessor implements ConnectionProcessor {
     public void process(final ConnectionUDP conn) {
         this.conn = conn;
         pc = this;
-        Route.es.execute(() -> process());
+        Route.executor.execute(() -> process());
     }
 
     void process() {
@@ -68,7 +68,7 @@ class MapTunnelProcessor implements ConnectionProcessor {
             final Pipe p1 = new Pipe();
             final Pipe p2 = new Pipe();
 
-            Route.es.execute(() -> {
+            Route.executor.execute(() -> {
                 try {
                     p1.pipe(sis, tos, 100 * 1024, p2);
                 } catch (Exception e) {
@@ -80,7 +80,7 @@ class MapTunnelProcessor implements ConnectionProcessor {
                     }
                 }
             });
-            Route.es.execute(() -> {
+            Route.executor.execute(() -> {
                 try {
                     p2.pipe(tis, sos, 100 * 1024 * 1024, conn);
                 } catch (Exception e) {

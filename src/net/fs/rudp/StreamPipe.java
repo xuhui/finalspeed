@@ -111,7 +111,7 @@ public class StreamPipe {
 				}
 			}
 		};
-		Route.es.execute(thread);
+		Route.executor.execute(thread);
 	}
 	
 	void close(){
@@ -124,7 +124,7 @@ public class StreamPipe {
 			}
 
 			if(socketA!=null){
-				Route.es.execute(new Runnable() {
+				Route.executor.execute(new Runnable() {
 					
 					public void run() {
 						try {
@@ -141,7 +141,7 @@ public class StreamPipe {
 			
 			if(socketB!=null){
 
-				Route.es.execute(new Runnable() {
+				Route.executor.execute(new Runnable() {
 					
 					public void run() {
 						try {

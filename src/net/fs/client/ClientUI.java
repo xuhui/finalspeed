@@ -623,7 +623,7 @@ public class ClientUI implements ClientUII, WindowListener {
         mapClient.setMapServer(config.getServerAddress(), config.getServerPort(), config.getRemotePort(), null, null, config.isDirect_cn(), config.getProtocal().equals("tcp"),
                 null);
 
-        Route.es.execute(new Runnable() {
+        Route.executor.execute(new Runnable() {
 
             @Override
             public void run() {

@@ -2,6 +2,8 @@
 
 package net.fs.rudp;
 
+import net.fs.server.MapTunnelProcessor;
+
 import java.net.InetAddress;
 
 public class ConnectionUDP {
@@ -44,7 +46,8 @@ public class ConnectionUDP {
             uos = new UDPOutputStream(this);
             uis = new UDPInputStream(this);
             if (mode == Route.MODE_SERVER) {
-                route.createTunnelProcessor().process(this);
+                // TODO: 7/7/2016 need to optimize
+                new MapTunnelProcessor().process(this);
             }
         } catch (Exception e) {
             e.printStackTrace();

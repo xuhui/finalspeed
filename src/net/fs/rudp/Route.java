@@ -31,10 +31,8 @@ public class Route {
         return mode;
     }
 
-    private String processorName;
-
     //todo need to optimize
-    public static ThreadPoolExecutor es = new ThreadPoolExecutor(100, Integer.MAX_VALUE, 10 * 1_000, TimeUnit.MILLISECONDS, new SynchronousQueue());
+    public static ThreadPoolExecutor executor = new ThreadPoolExecutor(100, Integer.MAX_VALUE, 10 * 1_000, TimeUnit.MILLISECONDS, new SynchronousQueue());
 
     public static int localDownloadSpeed, localUploadSpeed;
 
@@ -60,24 +58,17 @@ public class Route {
         delayAckManage = new AckListManage();
     }
 
-    public Route(String processorName, short routePort, int mode, boolean tcp, boolean tcpEnvSuccess) throws Exception {
-
+    public Route(short routePort, int mode, boolean tcp, boolean tcpEnvSuccess) throws Exception {
         this.mode = mode;
         useTcpTun = tcp;
-        this.processorName = processorName;
         if (useTcpTun) {
-            if (this.mode == 2) {
+            if (this.mode == MODE_SERVER) {
                 //服务端
                 VDatagramSocket d = new VDatagramSocket(routePort);
                 d.setClient(false);
-                try {
-                    capEnv = new CapEnv(false, tcpEnvSuccess);
-                    capEnv.setListenPort(routePort);
-                    capEnv.init();
-                } catch (Exception e) {
-                    //e.printStackTrace();
-                    throw e;
-                }
+                capEnv = new CapEnv(false, tcpEnvSuccess);
+                capEnv.setListenPort(routePort);
+                capEnv.init();
                 d.setCapEnv(capEnv);
 
                 ds = d;
@@ -85,13 +76,8 @@ public class Route {
                 //客户端
                 VDatagramSocket d = new VDatagramSocket();
                 d.setClient(true);
-                try {
-                    capEnv = new CapEnv(true, tcpEnvSuccess);
-                    capEnv.init();
-                } catch (Exception e) {
-                    //e.printStackTrace();
-                    throw e;
-                }
+                capEnv = new CapEnv(true, tcpEnvSuccess);
+                capEnv.init();
                 d.setCapEnv(capEnv);
 
                 ds = d;
@@ -235,21 +221,6 @@ public class Route {
 
     public void sendPacket(DatagramPacket dp) throws IOException {
         ds.send(dp);
-    }
-
-    public ConnectionProcessor createTunnelProcessor() {
-        ConnectionProcessor o = null;
-        try {
-            Class onwClass = Class.forName(processorName);
-            o = (ConnectionProcessor) onwClass.newInstance();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return o;
     }
 
     void removeConnection(ConnectionUDP conn) {

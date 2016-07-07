@@ -2,7 +2,6 @@
 
 package net.fs.rudp;
 
-import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 
@@ -18,7 +17,7 @@ public class ResendManage implements Runnable{
 	LinkedBlockingQueue<ResendItem> taskList=new LinkedBlockingQueue<ResendItem>();
 	
 	public ResendManage(){
-		Route.es.execute(this);
+		Route.executor.execute(this);
 	}
 	
 	public void addTask(final ConnectionUDP conn,final int sequence){
@@ -51,7 +50,7 @@ public class ResendManage implements Runnable{
 
 						if(!ri.conn.stopnow){
 							//多线程重发容易内存溢出
-//							Route.es.execute(new Runnable() {
+//							Route.executor.execute(new Runnable() {
 //								
 //								@Override
 //								public void run() {

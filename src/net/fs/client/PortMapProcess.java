@@ -72,7 +72,7 @@ public class PortMapProcess implements ClientProcessorInterface{
 			String uimessage="";
 			if(code==Constant.code_success){
 
-				Route.es.execute(new Runnable() {
+				Route.executor.execute(new Runnable() {
 
 					@Override
 					public void run() {
@@ -95,7 +95,7 @@ public class PortMapProcess implements ClientProcessorInterface{
 
 				});
 
-				Route.es.execute(new Runnable() {
+				Route.executor.execute(new Runnable() {
 
 					@Override
 					public void run() {

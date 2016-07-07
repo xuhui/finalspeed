@@ -23,11 +23,9 @@ public class FSServer {
         ConsoleLogger.info("FinalSpeed Server Starting...");
         ConsoleLogger.info("System Name:" + SYSTEM_NAME);
 
-        MapTunnelProcessor mp = new MapTunnelProcessor();
-
         //todo read port from the configuration file and set
 
-        route_udp = new Route(mp.getClass().getName(), routePort, Route.MODE_SERVER, false, true);
+        route_udp = new Route(routePort, Route.MODE_SERVER, false, true);
         if (SYSTEM_NAME.equals("linux")) {
             startFirewall_linux();
             setFireWall_linux_udp();
@@ -35,9 +33,9 @@ public class FSServer {
             startFirewall_windows();
         }
 
-        Route.es.execute(() -> {
+        Route.executor.execute(() -> {
             try {
-                route_tcp = new Route(mp.getClass().getName(), (short) routePort, Route.MODE_SERVER, true, true);
+                route_tcp = new Route(routePort, Route.MODE_SERVER, true, true);
                 if (SYSTEM_NAME.equals("linux")) {
                     setFireWall_linux_tcp();
                 } else if (SYSTEM_NAME.contains("windows")) {
@@ -63,7 +61,6 @@ public class FSServer {
                 ConsoleLogger.println("Udp port already in use.");
             }
             ConsoleLogger.println("Start failed.");
-            System.exit(0);
         }
     }
 
@@ -182,12 +179,11 @@ public class FSServer {
 
     }
 
-    void startFirewall_linux() {
-        String cmd1 = "service iptables start";
-        runCommand(cmd1);
+    private void startFirewall_linux() {
+        runCommand("service iptables start");
     }
 
-    void setFireWall_linux_udp() {
+    private void setFireWall_linux_udp() {
         cleanUdpTunRule();
         String cmd2 = "iptables -I INPUT -p udp --dport " + routePort + " -j ACCEPT"
                 + " -m comment --comment udptun_fs_server";
