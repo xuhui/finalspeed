@@ -80,12 +80,11 @@ public class TunManager {
     }
 
     public void addConnection_Client(TCPTun conn) {
-        synchronized (syn_scan) {
-            String key = conn.remoteAddress.getHostAddress() + ":" + conn.remotePort + ":" + conn.localPort;
-            //MLog.println("addConnection "+key);
-            conn.setKey(key);
-            connTable.put(key, conn);
-        }
+        String key = conn.remoteAddress.getHostAddress() + ":" + conn.remotePort + ":" + conn.localPort;
+        //MLog.println("addConnection "+key);
+        conn.setKey(key);
+        //todo put or putIfAbsent
+        connTable.putIfAbsent(key, conn);
     }
 
     public TCPTun getTcpConnection_Server(String remoteAddress, short remotePort) {
@@ -93,12 +92,11 @@ public class TunManager {
     }
 
     public void addConnection_Server(TCPTun conn) {
-        synchronized (syn_scan) {
-            String key = conn.remoteAddress.getHostAddress() + ":" + conn.remotePort;
-            //MLog.println("addConnection "+key);
-            conn.setKey(key);
-            connTable.put(key, conn);
-        }
+        String key = conn.remoteAddress.getHostAddress() + ":" + conn.remotePort;
+        //MLog.println("addConnection "+key);
+        conn.setKey(key);
+        //todo put or putIfAbsent
+        connTable.putIfAbsent(key, conn);
     }
 
     public TCPTun getDefaultTcpTun() {
