@@ -2,43 +2,24 @@
 
 package net.fs.cap;
 
+import net.fs.rudp.Route;
+import net.fs.utils.ByteShortConvert;
+import net.fs.utils.ConsoleLogger;
+import org.pcap4j.core.BpfProgram.BpfCompileMode;
+import org.pcap4j.core.*;
+import org.pcap4j.core.PcapNetworkInterface.PromiscuousMode;
+import org.pcap4j.packet.*;
+import org.pcap4j.packet.EthernetPacket.EthernetHeader;
+import org.pcap4j.packet.IpV4Packet.IpV4Header;
+import org.pcap4j.packet.TcpPacket.TcpHeader;
+import org.pcap4j.util.MacAddress;
+
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-
-import net.fs.rudp.Route;
-import net.fs.utils.ByteShortConvert;
-import net.fs.utils.MLog;
-
-import org.pcap4j.core.NotOpenException;
-import org.pcap4j.core.PacketListener;
-import org.pcap4j.core.PcapHandle;
-import org.pcap4j.core.PcapNativeException;
-import org.pcap4j.core.PcapNetworkInterface;
-import org.pcap4j.core.PcapNetworkInterface.PromiscuousMode;
-import org.pcap4j.core.PcapStat;
-import org.pcap4j.core.Pcaps;
-import org.pcap4j.core.BpfProgram.BpfCompileMode;
-import org.pcap4j.packet.EthernetPacket;
-import org.pcap4j.packet.EthernetPacket.EthernetHeader;
-import org.pcap4j.packet.IllegalPacket;
-import org.pcap4j.packet.IllegalRawDataException;
-import org.pcap4j.packet.IpV4Packet;
-import org.pcap4j.packet.IpV4Packet.IpV4Header;
-import org.pcap4j.packet.Packet;
-import org.pcap4j.packet.TcpPacket;
-import org.pcap4j.packet.TcpPacket.TcpHeader;
-import org.pcap4j.util.MacAddress;
 
 
 public class CapEnv {
@@ -110,11 +91,11 @@ public class CapEnv {
 				while(true){
 					if(System.currentTimeMillis()-t>5*1000){
 						for(int i=0;i<10;i++){
-							MLog.info("休眠恢复... "+(i+1));
+							ConsoleLogger.info("休眠恢复... " + (i + 1));
 							try {
 								boolean success=initInterface();
 								if(success){
-									MLog.info("休眠恢复成功 "+(i+1));
+									ConsoleLogger.info("休眠恢复成功 " + (i + 1));
 									break;
 								}
 							} catch (Exception e1) {
@@ -178,7 +159,7 @@ public class CapEnv {
 					}
 				}
 			}else if(packet_eth.getPayload() instanceof IllegalPacket){
-				MLog.println("IllegalPacket!!!");
+				ConsoleLogger.println("IllegalPacket!!!");
 			}
 		}
 	
@@ -199,13 +180,13 @@ public class CapEnv {
 		boolean success=false;
 		detectInterface();
 		List<PcapNetworkInterface> allDevs = Pcaps.findAllDevs();
-		MLog.println("Network Interface List: ");
+		ConsoleLogger.println("Network Interface List: ");
 		for(PcapNetworkInterface pi:allDevs){
 			String desString="";
 			if(pi.getDescription()!=null){
 				desString=pi.getDescription();
 			}
-			MLog.info("  "+desString+"   "+pi.getName());
+			ConsoleLogger.info("  " + desString + "   " + pi.getName());
 			if(pi.getName().equals(selectedInterfaceName)
 					&&desString.equals(selectedInterfaceDes)){
 				nif=pi;
@@ -218,13 +199,13 @@ public class CapEnv {
 				desString=nif.getDescription();
 			}
 			success=true;
-			MLog.info("Selected Network Interface:\n"+"  "+desString+"   "+nif.getName());
+			ConsoleLogger.info("Selected Network Interface:\n" + "  " + desString + "   " + nif.getName());
 			if(fwSuccess){
 				tcpEnable=true;
 			}
 		}else {
 			tcpEnable=false;
-			MLog.info("Select Network Interface failed,can't use TCP protocal!\n");
+			ConsoleLogger.info("Select Network Interface failed,can't use TCP protocal!\n");
 		}
 		if(tcpEnable){
 			sendHandle = nif.openLive(SNAPLEN, getMode(nif), READ_TIMEOUT);
@@ -233,7 +214,7 @@ public class CapEnv {
 			String filter="";
 			if(!client){
 				//服务端
-				filter="tcp dst port "+toUnsigned(listenPort);
+				filter = "tcp dst port " + listenPort;
 			}else{
 				//客户端
 				filter="tcp";
@@ -272,7 +253,7 @@ public class CapEnv {
 		}
 		
 		if(!client){
-			MLog.info("FinalSpeed server start success.");
+			ConsoleLogger.info("FinalSpeed server start success.");
 		}
 		return success;
 	
@@ -412,7 +393,7 @@ public class CapEnv {
 				System.arraycopy(pppData, 8, ipData, 0, ipLength);
 				ipV4Packet=IpV4Packet.newPacket(ipData, 0, ipData.length);
 			}else {
-				MLog.println("长度不符!");
+				ConsoleLogger.println("长度不符!");
 			}
 		}
 		return ipV4Packet;
@@ -478,7 +459,7 @@ public class CapEnv {
 			}
 		}
 		if(address==null){
-			MLog.println("域名解析失败,请检查DNS设置!");
+			ConsoleLogger.println("域名解析失败,请检查DNS设置!");
 		}
 		final int por=80;
 		testIp_tcp=address.getHostAddress();
@@ -545,7 +526,7 @@ public class CapEnv {
 	public void setListenPort(short listenPort) {
 		this.listenPort = listenPort;
 		if(!client){
-			MLog.info("Listen tcp port: "+toUnsigned(listenPort));
+			ConsoleLogger.info("Listen tcp port: " + listenPort);
 		}
 	}
 	

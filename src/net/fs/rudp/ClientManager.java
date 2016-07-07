@@ -2,90 +2,69 @@
 
 package net.fs.rudp;
 
+import net.fs.utils.ConsoleLogger;
+
 import java.net.InetAddress;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import net.fs.utils.MLog;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
-public class ClientManager {
-	
-	HashMap<Integer, ClientControl> clientTable=new HashMap<Integer, ClientControl>();
-	
-	Thread mainThread;
-	
-	Route route;
-	
-	int receivePingTimeout=8*1000;
-	
-	int sendPingInterval=1*1000;
-	
-	Object syn_clientTable=new Object();
-	
-	ClientManager(Route route){
-		this.route=route;
-		mainThread=new Thread(){
-			@Override
-			public void run(){
-				while(true){
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					scanClientControl();
-				}
-			}
-		};
-		mainThread.start();
-	}
-	
-	void scanClientControl(){
-		Iterator<Integer> it=getClientTableIterator();
-		long current=System.currentTimeMillis();
-		//MLog.println("ffffffffffff "+clientTable.size());
-		while(it.hasNext()){
-			ClientControl cc=clientTable.get(it.next());
-			if(cc!=null){
-				if(current-cc.getLastReceivePingTime()<receivePingTimeout){
-					if(current-cc.getLastSendPingTime()>sendPingInterval){
-						cc.sendPingMessage();
-					}
-				}else {
-					//超时关闭client
-					MLog.println("超时关闭client "+cc.dstIp.getHostAddress()+":"+cc.dstPort+" "+new Date());
-//					System.exit(0);
-					synchronized (syn_clientTable) {
-						cc.close();
-					}
-				}
-			}
-		}
-	}
-	
-	void removeClient(int clientId){
-		clientTable.remove(clientId);
-	}
-	
-	Iterator<Integer> getClientTableIterator(){
-		Iterator<Integer> it=null;
-		synchronized (syn_clientTable) {
-			it=new CopiedIterator(clientTable.keySet().iterator());
-		}
-		return it;
-	}
-	
-	ClientControl getClientControl(int clientId,InetAddress dstIp,int dstPort){
-		ClientControl c=clientTable.get(clientId);
-		if(c==null){
-			c=new ClientControl(route,clientId,dstIp,dstPort);
-			synchronized (syn_clientTable) {
-				clientTable.put(clientId, c);
-			}
-		}
-		return c;
-	}
-	
+class ClientManager {
+
+    private Map<Integer, ClientControl> clientTable = new ConcurrentHashMap<>();
+
+    private static final int RECEIVE_PING_TIMEOUT = 8_000;
+
+    private static final int SEND_PING_INTERVAL = 1_000;
+
+    private Route route;
+
+    ClientManager(Route route) {
+        this.route = route;// todo check if used
+
+        // see http://stackoverflow.com/questions/2423284/java-thread-garbage-collected-or-not
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                scanClientControl();
+            }
+        }).start();
+
+    }
+
+    private void scanClientControl() {
+
+        long currentTimeMillis = System.currentTimeMillis();
+
+        for (Integer clientId : clientTable.keySet()) {
+            ClientControl cc = clientTable.get(clientId);
+            if (cc != null) {
+                if (currentTimeMillis - cc.getLastReceivePingTime() < RECEIVE_PING_TIMEOUT) {
+                    if (currentTimeMillis - cc.getLastSendPingTime() > SEND_PING_INTERVAL) {
+                        cc.sendPingMessage();
+                    }
+                } else {
+                    ConsoleLogger.println("超时关闭client " + cc.dstIp.getHostAddress() + ":" + cc.dstPort + " " + new Date());//todo LocalDateTime and format
+                    clientTable.remove(clientId);
+                    cc.close();
+                }
+            }
+        }
+
+    }
+
+    ClientControl getClientControl(int clientId, InetAddress dstIp, int dstPort) {
+        ClientControl clientControl = clientTable.get(clientId);
+        if (clientControl == null) { // todo check thread safe
+            clientControl = new ClientControl(route, clientId, dstIp, dstPort);
+            clientTable.put(clientId, clientControl);
+        }
+        return clientControl;
+    }
+
 }

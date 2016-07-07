@@ -2,157 +2,137 @@
 
 package net.fs.server;
 
+import com.alibaba.fastjson.JSONObject;
+import net.fs.client.Pipe;
+import net.fs.rudp.*;
+import net.fs.utils.ConsoleLogger;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import net.fs.client.Pipe;
-import net.fs.rudp.ConnectionProcessor;
-import net.fs.rudp.ConnectionUDP;
-import net.fs.rudp.Constant;
-import net.fs.rudp.Route;
-import net.fs.rudp.UDPInputStream;
-import net.fs.rudp.UDPOutputStream;
-import net.fs.utils.MLog;
 
-import com.alibaba.fastjson.JSONObject;
+class MapTunnelProcessor implements ConnectionProcessor {
 
+    Socket dstSocket = null;
 
-public class MapTunnelProcessor implements ConnectionProcessor{
+    boolean closed = false;
 
-	Socket dstSocket=null;
+    MapTunnelProcessor pc;
 
-	boolean closed=false;
+    ConnectionUDP conn;
 
-	MapTunnelProcessor pc;
+    UDPInputStream tis;
 
-	ConnectionUDP conn;
+    UDPOutputStream tos;
 
+    InputStream sis;
 
-	UDPInputStream  tis;
+    OutputStream sos;
 
-	UDPOutputStream tos;
+    public void process(final ConnectionUDP conn) {
+        this.conn = conn;
+        pc = this;
+        Route.es.execute(() -> process());
+    }
 
-	InputStream sis;
+    void process() {
 
-	OutputStream sos;
+        tis = conn.uis;
+        tos = conn.uos;
 
-	public void process(final ConnectionUDP conn){
-		this.conn=conn;
-		pc=this;
-		Route.es.execute(new Runnable(){
-			public void run(){
-				process();
-			}
-		});
-	}
+        byte[] headData;
+        try {
+            headData = tis.read2();
+            String hs = new String(headData, "utf-8");
+            JSONObject requestJSon = JSONObject.parseObject(hs);
+            final int dstPort = requestJSon.getIntValue("dst_port");
+            String message = "";
+            JSONObject responeJSon = new JSONObject();
+            int code = Constant.code_failed;
+            code = Constant.code_success;
+            responeJSon.put("code", code);
+            responeJSon.put("message", message);
+            byte[] responeData = responeJSon.toJSONString().getBytes("utf-8");
+            tos.write(responeData, 0, responeData.length);
+            if (code != Constant.code_success) {
+                close();
+                return;
+            }
+            dstSocket = new Socket("127.0.0.1", dstPort);
+            dstSocket.setTcpNoDelay(true);
+            sis = dstSocket.getInputStream();
+            sos = dstSocket.getOutputStream();
 
+            final Pipe p1 = new Pipe();
+            final Pipe p2 = new Pipe();
 
-	void process(){
-
-		tis=conn.uis;
-		tos=conn.uos;
-
-		byte[] headData;
-		try {
-			headData = tis.read2();
-			String hs=new String(headData,"utf-8");
-			JSONObject requestJSon=JSONObject.parseObject(hs);
-			final int dstPort=requestJSon.getIntValue("dst_port");
-			String message="";
-			JSONObject responeJSon=new JSONObject();
-			int code=Constant.code_failed;			
-			code=Constant.code_success;
-			responeJSon.put("code", code);
-			responeJSon.put("message", message);
-			byte[] responeData=responeJSon.toJSONString().getBytes("utf-8");
-			tos.write(responeData, 0, responeData.length);
-			if(code!=Constant.code_success){
-				close();
-				return;
-			}
-			dstSocket = new Socket("127.0.0.1", dstPort);
-			dstSocket.setTcpNoDelay(true);
-			sis=dstSocket.getInputStream();
-			sos=dstSocket.getOutputStream();
-
-			final Pipe p1=new Pipe();
-			final Pipe p2=new Pipe();
-
-			Route.es.execute(new Runnable() {
-
-				public void run() {
-					try {
-						p1.pipe(sis, tos,100*1024,p2);
-					}catch (Exception e) {
-						//e.printStackTrace();
-					}finally{
-						close();
-						if(p1.getReadedLength()==0){
-							MLog.println("端口"+dstPort+"无返回数据");
-						}
-					}
-				}
-
-			});
-			Route.es.execute(new Runnable() {
-
-				public void run() {
-					try {
-						p2.pipe(tis,sos,100*1024*1024,conn);
-					}catch (Exception e) {
-						//e.printStackTrace();
-					}finally{
-						close();
-					}
-				}
-			});
+            Route.es.execute(() -> {
+                try {
+                    p1.pipe(sis, tos, 100 * 1024, p2);
+                } catch (Exception e) {
+                    //e.printStackTrace();
+                } finally {
+                    close();
+                    if (p1.getReadedLength() == 0) {
+                        ConsoleLogger.println("端口" + dstPort + "无返回数据");
+                    }
+                }
+            });
+            Route.es.execute(() -> {
+                try {
+                    p2.pipe(tis, sos, 100 * 1024 * 1024, conn);
+                } catch (Exception e) {
+                    //e.printStackTrace();
+                } finally {
+                    close();
+                }
+            });
 
 
-		} catch (Exception e2) {
-			//e2.printStackTrace();
-			close();
-		}
+        } catch (Exception e2) {
+            //e2.printStackTrace();
+            close();
+        }
 
 
+    }
 
-	}
-
-	void close(){
-		if(!closed){
-			closed=true;
-			if(sis!=null){
-				try {
-					sis.close();
-				} catch (IOException e) {
-					//e.printStackTrace();
-				}
-			}
-			if(sos!=null){
-				try {
-					sos.close();
-				} catch (IOException e) {
-					//e.printStackTrace();
-				}
-			}
-			if(tos!=null){
-				tos.closeStream_Local();
-			}
-			if(tis!=null){
-				tis.closeStream_Local();
-			}
-			if(conn!=null){
-				conn.close_local();
-			}
-			if(dstSocket!=null){
-				try {
-					dstSocket.close();
-				} catch (IOException e) {
-					//e.printStackTrace();
-				}
-			}
-		}
-	}
+    void close() {
+        if (!closed) {
+            closed = true;
+            if (sis != null) {
+                try {
+                    sis.close();
+                } catch (IOException e) {
+                    //e.printStackTrace();
+                }
+            }
+            if (sos != null) {
+                try {
+                    sos.close();
+                } catch (IOException e) {
+                    //e.printStackTrace();
+                }
+            }
+            if (tos != null) {
+                tos.closeStream_Local();
+            }
+            if (tis != null) {
+                tis.closeStream_Local();
+            }
+            if (conn != null) {
+                conn.close_local();
+            }
+            if (dstSocket != null) {
+                try {
+                    dstSocket.close();
+                } catch (IOException e) {
+                    //e.printStackTrace();
+                }
+            }
+        }
+    }
 
 }

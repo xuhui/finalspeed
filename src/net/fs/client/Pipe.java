@@ -2,18 +2,13 @@
 
 package net.fs.client;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import net.fs.rudp.ConnectionUDP;
 import net.fs.rudp.UDPInputStream;
 import net.fs.rudp.UDPOutputStream;
-import net.fs.utils.MLog;
+import net.fs.utils.ConsoleLogger;
+
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class Pipe {
 
@@ -84,7 +79,7 @@ public class Pipe {
 						msged=true;
 						String msg="端口"+dstPort+"连接成功";
 						ClientUI.ui.setMessage(msg);
-						MLog.println(msg);
+						ConsoleLogger.println(msg);
 					}
 					
 				}
