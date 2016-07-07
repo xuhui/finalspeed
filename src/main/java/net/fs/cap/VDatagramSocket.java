@@ -15,7 +15,7 @@ public class VDatagramSocket extends DatagramSocket {
 
     private boolean isClient = true;
 
-    LinkedBlockingQueue<TunData> packetList = new LinkedBlockingQueue<TunData>();
+    private LinkedBlockingQueue<TunData> packetQueue = new LinkedBlockingQueue<>();
 
     CapEnv capEnv;
 
@@ -31,10 +31,6 @@ public class VDatagramSocket extends DatagramSocket {
 
     public VDatagramSocket(int port) throws SocketException {
         localPort = port;
-    }
-
-    public int getLocalPort() {
-        return localPort;
     }
 
     public void send(DatagramPacket p) throws IOException {
@@ -93,7 +89,7 @@ public class VDatagramSocket extends DatagramSocket {
     public synchronized void receive(DatagramPacket p) throws IOException {
         TunData td = null;
         try {
-            td = packetList.take();
+            td = packetQueue.take();
             p.setData(td.data);
             p.setLength(td.data.length);
             p.setAddress(td.tun.remoteAddress);
@@ -104,7 +100,7 @@ public class VDatagramSocket extends DatagramSocket {
     }
 
     void onReceinveFromTun(TunData td) {
-        packetList.add(td);
+        packetQueue.add(td);
     }
 
     public boolean isClient() {
