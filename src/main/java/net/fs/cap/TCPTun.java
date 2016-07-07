@@ -15,7 +15,6 @@ import org.pcap4j.util.MacAddress;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
@@ -24,9 +23,6 @@ import java.util.Random;
 public class TCPTun {
 
 	HashMap<Integer,TcpPacket>  sendedTable_server=new HashMap<Integer,TcpPacket> ();
-	HashMap<Integer,TcpPacket>  sendedTable_history_server=new HashMap<Integer,TcpPacket> ();
-
-	int clientSequence=Integer.MIN_VALUE;
 
 	static Random random=new Random();
 
@@ -34,45 +30,7 @@ public class TCPTun {
 
 	HashSet<Short> selfAckTable=new HashSet<Short>();
 
-	HashMap<Integer, SendRecord> sendrecordTable=new HashMap<Integer, SendRecord>();
-
 	MacAddress dstMacaAddress;
-
-	int sequenceNum=-1;
-
-	Thread sendThread;
-
-	boolean sended=false;
-
-	Packet basePacket_server;
-
-	short baseIdent=100;
-
-	IPacket dst_readed_packet,last_send_packet;
-
-	int presend_server;
-
-	ArrayList<IPacket> packetList=new ArrayList<IPacket>();
-
-	HashMap<Integer, IPacket> packetTable_l=new HashMap<Integer, IPacket>();
-
-	HashMap<Integer, IPacket> packetTable=new HashMap<Integer, IPacket>();
-
-	ArrayList<IPacket> unacked_list=new ArrayList<IPacket>();
-
-	Object syn_packetList=new Object();
-
-	int max_client_ack=Integer.MIN_VALUE;
-
-	int sendIndex=0;
-
-	long lasSetDelayTime=0;
-
-	long lastDelay=300;
-
-	Object syn_delay=new Object();
-
-	Thread resendScanThread;
 
 	boolean connectReady=false;
 
@@ -84,7 +42,6 @@ public class TCPTun {
 	public short remotePort;
 	int remoteStartSequence;
 	int remoteSequence;
-	int remoteIdent;
 	int remoteSequence_max;
 
 	Inet4Address localAddress;
