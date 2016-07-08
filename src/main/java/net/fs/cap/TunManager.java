@@ -52,7 +52,7 @@ public class TunManager {
                     long t = System.currentTimeMillis() - tun.lastReceiveDataTime;
                     if (t > 6000) {
                         connTable.remove(key);
-                        if (capEnv.client) {
+                        if (capEnv.isClient()) {
                             defaultTcpTun = null;
                             ConsoleLogger.println("tcp隧道超时");
                         }
