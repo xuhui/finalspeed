@@ -3,6 +3,9 @@ package net.fs.utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Poison on 7/11/2016.
@@ -31,17 +34,23 @@ public class Command {
         }
     }
 
-    public static int executeAndGetInt(String command) {
+    public static Optional<List<String>> executeShellAndGetLines(String command) {
+
+        List<String> lines = new ArrayList<>();
 
         try {
-            Process p = Runtime.getRuntime().exec(command);
+            Process p = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
 
             try (BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream())); BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
-                int count = stdInput.read();
-                if (count != -1) {
-                    return count;
+                String line;
+                while ((line = stdInput.readLine()) != null) {
+                    ConsoleLogger.info(line);
+                    lines.add(line);
                 }
-                return stdError.read();
+                while ((line = stdError.readLine()) != null) {
+                    ConsoleLogger.info(line);
+                    lines.add(line);
+                }
             }
 
         } catch (IOException e) {
@@ -50,7 +59,12 @@ public class Command {
             System.exit(-1);
         }
 
-        return -1;
+        if (lines.size() == 0) {
+            return Optional.empty();
+        } else {
+            return Optional.of(lines);
+        }
+
     }
 
 }
