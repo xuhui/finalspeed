@@ -42,7 +42,7 @@ public class FSServer {
 
         route_udp = new Route(routePort, Route.MODE_SERVER, false, true);
         if (SystemUtils.IS_OS_LINUX) {
-            startFirewall_linux();
+            Command.execute("service iptables start");
             setFireWall_linux_udp();
         } else if (SystemUtils.IS_OS_WINDOWS) {
             startFirewall_windows();
@@ -66,7 +66,6 @@ public class FSServer {
         });
 
     }
-
 
     void startFirewall_windows() {
 
@@ -183,122 +182,33 @@ public class FSServer {
 
     }
 
-    private void startFirewall_linux() {
-        Command.execute("service iptables start");
-    }
-
     private void setFireWall_linux_udp() {
         cleanUdpTunRule();
-        String cmd2 = "iptables -I INPUT -p udp --dport " + routePort + " -j ACCEPT"
-                + " -m comment --comment udptun_fs_server";
-        Command.execute(cmd2);
+        Command.execute("iptables -I INPUT -p udp --dport " + routePort + " -j ACCEPT -m comment --comment black_envelope_udp");
     }
 
-    void cleanUdpTunRule() {
-        while (true) {
-            int row = getRow("udptun_fs_server");
-            if (row > 0) {
-                // MLog.println("删除行 "+row);
-                String cmd = "iptables -D INPUT " + row;
-                Command.execute(cmd);
-            } else {
-                break;
-            }
+    private void cleanUdpTunRule() {
+        //todo need to optimize
+        int rows = Command.executeAndGetInt("iptables -L | grep black_envelope_udp -c");
+        if (rows > 0) {
+            Command.execute("iptables -D INPUT ");
         }
     }
 
     void setFireWall_linux_tcp() {
         cleanTcpTunRule();
         String cmd2 = "iptables -I INPUT -p tcp --dport " + routePort + " -j DROP"
-                + " -m comment --comment tcptun_fs_server ";
+                + " -m comment --comment black_envelope_tcp";
         Command.execute(cmd2);
 
     }
 
-    void cleanTcpTunRule() {
-        while (true) {
-            int row = getRow("tcptun_fs_server");
-            if (row > 0) {
-                // MLog.println("删除行 "+row);
-                String cmd = "iptables -D INPUT " + row;
-                Command.execute(cmd);
-            } else {
-                break;
-            }
+    private void cleanTcpTunRule() {
+        //todo need to optimize
+        int rows = Command.executeAndGetInt("iptables -L | grep black_envelope_tcp -c");
+        if (rows > 0) {
+            Command.execute("iptables -D INPUT ");
         }
-    }
-
-    int getRow(String name) {
-        int row_delect = -1;
-        String cme_list_rule = "iptables -L -n --line-number";
-        // String [] cmd={"netsh","advfirewall set allprofiles state on"};
-        Thread errorReadThread = null;
-        try {
-            final Process p = Runtime.getRuntime().exec(cme_list_rule, null);
-
-            errorReadThread = new Thread() {
-                public void run() {
-                    InputStream is = p.getErrorStream();
-                    BufferedReader localBufferedReader = new BufferedReader(new InputStreamReader(is));
-                    while (true) {
-                        String line;
-                        try {
-                            line = localBufferedReader.readLine();
-                            if (line == null) {
-                                break;
-                            } else {
-                                // System.out.println("erroraaa "+line);
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            // error();
-                            break;
-                        }
-                    }
-                }
-            };
-            errorReadThread.start();
-
-            InputStream is = p.getInputStream();
-            BufferedReader localBufferedReader = new BufferedReader(new InputStreamReader(is));
-            while (true) {
-                String line;
-                try {
-                    line = localBufferedReader.readLine();
-                    // System.out.println("standaaa "+line);
-                    if (line == null) {
-                        break;
-                    } else {
-                        if (line.contains(name)) {
-                            int index = line.indexOf("   ");
-                            if (index > 0) {
-                                String n = line.substring(0, index);
-                                try {
-                                    if (row_delect < 0) {
-                                        // System.out.println("standaaabbb
-                                        // "+line);
-                                        row_delect = Integer.parseInt(n);
-                                    }
-                                } catch (Exception e) {
-
-                                }
-                            }
-                        }
-                        ;
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    break;
-                }
-            }
-
-            errorReadThread.join();
-            p.waitFor();
-        } catch (Exception e) {
-            e.printStackTrace();
-            // error();
-        }
-        return row_delect;
     }
 
 }

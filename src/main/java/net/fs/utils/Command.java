@@ -31,4 +31,26 @@ public class Command {
         }
     }
 
+    public static int executeAndGetInt(String command) {
+
+        try {
+            Process p = Runtime.getRuntime().exec(command);
+
+            try (BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream())); BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
+                int count = stdInput.read();
+                if (count != -1) {
+                    return count;
+                }
+                return stdError.read();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            ConsoleLogger.error("execute command " + command + " failed!, JVM exit!");
+            System.exit(-1);
+        }
+
+        return -1;
+    }
+
 }
