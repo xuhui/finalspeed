@@ -8,8 +8,6 @@ import net.fs.rudp.Route;
 import net.fs.utils.ConsoleLogger;
 import net.fs.utils.FireWallUtil;
 
-import java.net.BindException;
-
 public class FSServer {
 
     private static short routePort = 150;
@@ -35,9 +33,6 @@ public class FSServer {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            if (e instanceof BindException) {
-                ConsoleLogger.info("Udp port already in use.");
-            }
             ConsoleLogger.info("Start failed.");
         }
     }
