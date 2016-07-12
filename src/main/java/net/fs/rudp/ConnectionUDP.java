@@ -34,10 +34,10 @@ public class ConnectionUDP {
         this.dstPort = dstPort;
         this.mode = mode;
         if (mode == Route.MODE_CLIENT) {
-            //MLog.println("                 发起连接RUDP "+dstIp+":"+dstPort+" connectId "+connectId);
+            //MLog.info("                 发起连接RUDP "+dstIp+":"+dstPort+" connectId "+connectId);
         } else if (mode == Route.MODE_SERVER) {
 
-            //MLog.println("                 接受连接RUDP "+dstIp+":"+dstPort+" connectId "+connectId);
+            //MLog.info("                 接受连接RUDP "+dstIp+":"+dstPort+" connectId "+connectId);
         }
         this.connectId = connectId;
         try {
@@ -53,13 +53,13 @@ public class ConnectionUDP {
             e.printStackTrace();
             connected = false;
             this.route.connTable.remove(connectId);
-            //#MLog.println("                 连接失败RUDP "+connectId);
+            //#MLog.info("                 连接失败RUDP "+connectId);
             synchronized (this) {
                 notifyAll();
             }
             throw e;
         }
-        //#MLog.println("                 连接成功RUDP "+connectId);
+        //#MLog.info("                 连接成功RUDP "+connectId);
         synchronized (this) {
             notifyAll();
         }

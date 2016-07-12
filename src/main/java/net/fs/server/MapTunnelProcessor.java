@@ -76,7 +76,7 @@ public class MapTunnelProcessor implements ConnectionProcessor {
                 } finally {
                     close();
                     if (p1.getReadedLength() == 0) {
-                        ConsoleLogger.println("端口" + dstPort + "无返回数据");
+                        ConsoleLogger.info("端口" + dstPort + "无返回数据");
                     }
                 }
             });

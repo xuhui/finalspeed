@@ -54,7 +54,7 @@ public class TunManager {
                         connTable.remove(key);
                         if (capEnv.isClient()) {
                             defaultTcpTun = null;
-                            ConsoleLogger.println("tcp隧道超时");
+                            ConsoleLogger.info("tcp隧道超时");
                         }
                     }
                 } else {
@@ -81,7 +81,7 @@ public class TunManager {
 
     public void addConnection_Client(TCPTun conn) {
         String key = conn.remoteAddress.getHostAddress() + ":" + conn.remotePort + ":" + conn.localPort;
-        //MLog.println("addConnection "+key);
+        //MLog.info("addConnection "+key);
         conn.setKey(key);
         //todo put or putIfAbsent
         connTable.putIfAbsent(key, conn);
@@ -93,7 +93,7 @@ public class TunManager {
 
     public void addConnection_Server(TCPTun conn) {
         String key = conn.remoteAddress.getHostAddress() + ":" + conn.remotePort;
-        //MLog.println("addConnection "+key);
+        //MLog.info("addConnection "+key);
         conn.setKey(key);
         //todo put or putIfAbsent
         connTable.putIfAbsent(key, conn);

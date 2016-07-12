@@ -23,7 +23,7 @@ public class AckListTask {
 	}
 	
 	synchronized void addAck(int sequence){
-		////#MLog.println("sendACK "+sequence);
+		////#MLog.info("sendACK "+sequence);
 		if(!set.contains(sequence)){
 			ackList.add(sequence);
 			set.add(sequence);
@@ -34,7 +34,7 @@ public class AckListTask {
 		int offset=0;
 		int packetLength=RUDPConfig.ackListSum;
 		int length=ackList.size();
-		////#MLog.println("ffffffffaaaaaaaaa "+length);
+		////#MLog.info("ffffffffaaaaaaaaa "+length);
 		int sum=(length/packetLength);
 		if(length%packetLength!=0){
 			sum+=1;
@@ -55,7 +55,7 @@ public class AckListTask {
 //				conn.sender.sendALMessage(nl);
 //				conn.sender.sendALMessage(nl);
 				offset+=packetLength;
-				////#MLog.println("fffffffffa "+nl.size());
+				////#MLog.info("fffffffffa "+nl.size());
 				if(offset+len>length){
 					len=length-(sum-1)*packetLength;
 				}

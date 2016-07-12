@@ -38,9 +38,9 @@ public class NetStatus {
 			public void run(){
 				long lastTime=System.currentTimeMillis();
 				while(true){
-					////#MLog.println("xxxxxxxxxx");
+					////#MLog.info("xxxxxxxxxx");
 					if(Math.abs(System.currentTimeMillis()-lastTime)>1000){
-						////#MLog.println("yyyyyyyyyyy ");
+						////#MLog.info("yyyyyyyyyyy ");
 						lastTime=System.currentTimeMillis();
 						calcuSpeed();
 					}

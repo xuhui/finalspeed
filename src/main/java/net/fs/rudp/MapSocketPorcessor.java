@@ -121,11 +121,11 @@ public class MapSocketPorcessor implements PipeListener{
 	
 	public void closeAll(boolean closeDst){
 		//procTable.remove(id);
-		//Log.println("closeAll AAAAAAAAA");
+		//Log.info("closeAll AAAAAAAAA");
 		if(!closed){
-			//Log.println("closeAll BBBBBBBBBB");
+			//Log.info("closeAll BBBBBBBBBB");
 			closed=true;
-			//#MLog.println("MapSocketPorcessor Close");
+			//#MLog.info("MapSocketPorcessor Close");
 			try {
 				srcSocket.close();
 			} catch (IOException e) {

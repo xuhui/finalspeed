@@ -79,8 +79,8 @@ public class ClientControl {
                 } else {
                     protocal = "udp";
                 }
-                //MLog.println("    receive_ping222: "+pm.getPingId()+" "+new Date());
-                ConsoleLogger.println("delay_" + protocal + " " + pingDelay + "ms " + dp.getAddress().getHostAddress() + ":" + dp.getPort());
+                //MLog.info("    receive_ping222: "+pm.getPingId()+" "+new Date());
+                ConsoleLogger.info("delay_" + protocal + " " + pingDelay + "ms " + dp.getAddress().getHostAddress() + ":" + dp.getPort());
             }
         }
     }
@@ -173,7 +173,7 @@ public class ClientControl {
     public void onReceivePing(PingMessage pm) {
         if (route.getMode() == Route.MODE_SERVER) {
             currentSpeed = pm.getDownloadSpeed() * 1024;
-            //#MLog.println("更新对方速度: "+currentSpeed);
+            //#MLog.info("更新对方速度: "+currentSpeed);
         }
     }
 
@@ -239,9 +239,9 @@ public class ClientControl {
                         e.printStackTrace();
                     }
                     trueSleep_All += (System.nanoTime() - t1);
-                    //#MLog.println("sssssssssss "+(trueSleep_All-needSleep_All)/(1000*1000));
+                    //#MLog.info("sssssssssss "+(trueSleep_All-needSleep_All)/(1000*1000));
                 }
-                ////#MLog.println("sleepb "+sleepTime+" l "+sended+" s "+s+" n "+n+" tt "+(moreTime));
+                ////#MLog.info("sleepb "+sleepTime+" l "+sended+" s "+s+" n "+n+" tt "+(moreTime));
             }
             sended = 0;
         }

@@ -78,7 +78,7 @@ public class Pipe {
                         msged = true;
                         String msg = "端口" + dstPort + "连接成功";
                         ClientUI.ui.setMessage(msg);
-                        ConsoleLogger.println(msg);
+                        ConsoleLogger.info(msg);
                     }
 
                 }

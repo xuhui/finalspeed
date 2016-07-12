@@ -64,7 +64,7 @@ public class Receiver {
 			me=receiveTable.get(lastRead+1);
 			synchronized (availOb){
 				if(me==null){
-					//MLog.println("等待中 "+conn.connectId+" "+(lastRead+1));
+					//MLog.info("等待中 "+conn.connectId+" "+(lastRead+1));
 
 					try {
 						availOb.wait();
@@ -72,7 +72,7 @@ public class Receiver {
 						e.printStackTrace();
 					}
 					me=receiveTable.get(lastRead+1);
-					//MLog.println("等待完成aaa "+conn.connectId+" "+(lastRead+1));
+					//MLog.info("等待完成aaa "+conn.connectId+" "+(lastRead+1));
 				}
 			}
 
@@ -94,7 +94,7 @@ public class Receiver {
 			}
 
 			received+=me.getData().length;
-			//System.out.println("received "+received/1024/1024+"MB");
+			//System.out.info("received "+received/1024/1024+"MB");
 			return me.getData();
 		}else{
 			throw new ConnectException("连接已断开");
@@ -180,7 +180,7 @@ public class Receiver {
 						CloseMessage_Conn cm2=new CloseMessage_Conn(dp);
 						conn.close_remote();
 					}else{
-						////#MLog.println("未处理数据包 "+sType);
+						////#MLog.info("未处理数据包 "+sType);
 					}
 				}
 
@@ -190,7 +190,7 @@ public class Receiver {
 	}
 
 	public void destroy(){
-		//#MLog.println("destroy destroy destroy");
+		//#MLog.info("destroy destroy destroy");
 		synchronized (availOb) {
 			receiveTable.clear();
 		}

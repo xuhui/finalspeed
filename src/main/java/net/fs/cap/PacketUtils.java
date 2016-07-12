@@ -193,7 +193,7 @@ public class PacketUtils {
         //
 
         Packet p = buildIpV4(srcAddress_mac, dstAddrress_mac, builder_ipv4);
-        //System.out.println("自定义确认 "+" identification "+identification+" ack_sequence "+ack_sequence+" # "+tcpPacket.getHeader());
+        //System.out.info("自定义确认 "+" identification "+identification+" ack_sequence "+ack_sequence+" # "+tcpPacket.getHeader());
         return p;
 
     }
@@ -277,7 +277,7 @@ public class PacketUtils {
         builder_ipv4.payloadBuilder(builder_tcp);
         //
         Packet p = buildIpV4(srcAddress_mac, dstAddrress_mac, builder_ipv4);
-        //System.out.println("自定义确认 "+" identification "+identification+" ack_sequence "+ack_sequence+" # "+tcpPacket.getHeader());
+        //System.out.info("自定义确认 "+" identification "+identification+" ack_sequence "+ack_sequence+" # "+tcpPacket.getHeader());
         return p;
 
     }
@@ -361,7 +361,7 @@ public class PacketUtils {
 //		IpV4Packet p4=builder_ipv4.build();
 //		TcpPacket tcpPacket=builder_tcp.build();
         //selfAckTable.add(identification);
-        //System.out.println("自定义确认 "+" identification "+identification+" ack_sequence "+ack_sequence+" # "+tcpPacket.getHeader());
+        //System.out.info("自定义确认 "+" identification "+identification+" ack_sequence "+ack_sequence+" # "+tcpPacket.getHeader());
         return p;
 
     }

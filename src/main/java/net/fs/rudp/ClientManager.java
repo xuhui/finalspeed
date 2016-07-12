@@ -49,7 +49,7 @@ class ClientManager {
                         cc.sendPingMessage();
                     }
                 } else {
-                    ConsoleLogger.println("超时关闭client " + cc.dstIp.getHostAddress() + ":" + cc.dstPort + " " + new Date());//todo LocalDateTime and format
+                    ConsoleLogger.info("超时关闭client " + cc.dstIp.getHostAddress() + ":" + cc.dstPort + " " + new Date());//todo LocalDateTime and format
                     clientTable.remove(clientId);
                     cc.close();
                 }

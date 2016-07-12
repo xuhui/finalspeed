@@ -98,7 +98,7 @@ public class Route {
                 DatagramPacket dp = new DatagramPacket(b, b.length);
                 try {
                     datagramSocket.receive(dp);
-                    //MLog.println("接收 "+dp.getAddress());
+                    //MLog.info("接收 "+dp.getAddress());
                     packetQueue.add(dp);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -126,13 +126,13 @@ public class Route {
                 //todo need optimize int to short
                 int sType = MessageCheck.checkSType(dp);
 
-                //MLog.println("route receive MessageType111#"+sType+" "+dp.getAddress()+":"+dp.getPort());
+                //MLog.info("route receive MessageType111#"+sType+" "+dp.getAddress()+":"+dp.getPort());
 
                 final int connectId = ByteIntConvert.toInt(dpData, 4);
                 int remote_clientId = ByteIntConvert.toInt(dpData, 8);
 
                 if (closedTable.contains(connectId) && connectId != 0) {
-                    //#MLog.println("忽略已关闭连接包 "+connectId);
+                    //#MLog.info("忽略已关闭连接包 "+connectId);
                     continue;
                 }
 
@@ -155,14 +155,14 @@ public class Route {
                             ClientControl clientControl = clientManager.getClientControl(sim_clientId, dp.getAddress(), dp.getPort());
                             if (clientControl.getClientId_real() == -1) {
                                 clientControl.setClientId_real(remote_clientId);
-                                //#MLog.println("首次设置clientId "+remote_clientId);
+                                //#MLog.info("首次设置clientId "+remote_clientId);
                             } else {
                                 if (clientControl.getClientId_real() != remote_clientId) {
-                                    //#MLog.println("服务端重启更新clientId "+sType+" "+clientControl.getClientId_real()+" new: "+remote_clientId);
+                                    //#MLog.info("服务端重启更新clientId "+sType+" "+clientControl.getClientId_real()+" new: "+remote_clientId);
                                     clientControl.updateClientId(remote_clientId);
                                 }
                             }
-                            //#MLog.println("cccccc "+sType+" "+remote_clientId);
+                            //#MLog.info("cccccc "+sType+" "+remote_clientId);
                             setedTable.add(remote_clientId);
                         }
                     }

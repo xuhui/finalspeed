@@ -251,7 +251,7 @@ public class MapClient implements Trafficlistener {
         while (true) {
             int row = getRow_linux();
             if (row > 0) {
-                //MLog.println("删除行 "+row);
+                //MLog.info("删除行 "+row);
                 String cmd = "iptables -D OUTPUT " + row;
                 runCommand(cmd);
             } else {
@@ -279,7 +279,7 @@ public class MapClient implements Trafficlistener {
                             if (line == null) {
                                 break;
                             } else {
-                                //System.out.println("erroraaa "+line);
+                                //System.out.info("erroraaa "+line);
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -298,7 +298,7 @@ public class MapClient implements Trafficlistener {
                 String line;
                 try {
                     line = localBufferedReader.readLine();
-                    //	System.out.println("standaaa "+line);
+                    //	System.out.info("standaaa "+line);
                     if (line == null) {
                         break;
                     } else {
@@ -308,7 +308,7 @@ public class MapClient implements Trafficlistener {
                                 String n = line.substring(0, index);
                                 try {
                                     if (row_delect < 0) {
-                                        //System.out.println("standaaabbb "+line);
+                                        //System.out.info("standaaabbb "+line);
                                         row_delect = Integer.parseInt(n);
                                     }
                                 } catch (Exception e) {
@@ -367,14 +367,14 @@ public class MapClient implements Trafficlistener {
     }
 
     public void trafficDownload(TrafficEvent event) {
-        ////#MLog.println("下载 "+event.getTraffic());
+        ////#MLog.info("下载 "+event.getTraffic());
         netStatus.addDownload(event.getTraffic());
         lastTrafficTime = System.currentTimeMillis();
         downloadSum += event.getTraffic();
     }
 
     public void trafficUpload(TrafficEvent event) {
-        ////#MLog.println("上传 "+event.getTraffic());
+        ////#MLog.info("上传 "+event.getTraffic());
         netStatus.addUpload(event.getTraffic());
         lastTrafficTime = System.currentTimeMillis();
         uploadSum += event.getTraffic();
@@ -393,7 +393,7 @@ public class MapClient implements Trafficlistener {
                         String line;
                         try {
                             line = localBufferedReader.readLine();
-                            //System.out.println("stand "+line);
+                            //System.out.info("stand "+line);
                             if (line == null) {
                                 break;
                             }
@@ -417,7 +417,7 @@ public class MapClient implements Trafficlistener {
                             if (line == null) {
                                 break;
                             } else {
-                                //System.out.println("error "+line);
+                                //System.out.info("error "+line);
                             }
                         } catch (IOException e) {
                             e.printStackTrace();

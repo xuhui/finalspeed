@@ -235,7 +235,7 @@ public class ClientUI implements ClientUII, WindowListener {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//System.out.println(text_serverAddress.getSelectedItem().toString());
+				//System.out.info(text_serverAddress.getSelectedItem().toString());
 			}
 		});
         
@@ -496,7 +496,7 @@ public class ClientUI implements ClientUII, WindowListener {
                 mainFrame.setVisible(true);
                 JOptionPane.showMessageDialog(mainFrame, "启动windows防火墙失败,请先运行防火墙服务.");
             }
-            ConsoleLogger.println("启动windows防火墙失败,请先运行防火墙服务.");
+            ConsoleLogger.info("启动windows防火墙失败,请先运行防火墙服务.");
            // System.exit(0);
         }
         if (!success_firewall_osx) {
@@ -505,7 +505,7 @@ public class ClientUI implements ClientUII, WindowListener {
                 mainFrame.setVisible(true);
                 JOptionPane.showMessageDialog(mainFrame, "启动ipfw/pfctl防火墙失败,请先安装.");
             }
-            ConsoleLogger.println("启动ipfw/pfctl防火墙失败,请先安装.");
+            ConsoleLogger.info("启动ipfw/pfctl防火墙失败,请先安装.");
             //System.exit(0);
         }
 
@@ -542,7 +542,7 @@ public class ClientUI implements ClientUII, WindowListener {
                             mainFrame.setVisible(true);
                             JOptionPane.showMessageDialog(mainFrame, msg);
                         }
-                        ConsoleLogger.println(msg);
+                        ConsoleLogger.info(msg);
                         if (systemName.contains("windows")) {
                             try {
                                 Process p = Runtime.getRuntime().exec("winpcap_install.exe", null);
@@ -728,7 +728,7 @@ public class ClientUI implements ClientUII, WindowListener {
         if (systemName.contains("windows")) {
             boolean b = false;
             File file = new File(System.getenv("WINDIR") + "\\test.file");
-            //System.out.println("kkkkkkk "+file.getAbsolutePath());
+            //System.out.info("kkkkkkk "+file.getAbsolutePath());
             try {
                 file.createNewFile();
             } catch (IOException e) {
@@ -742,7 +742,7 @@ public class ClientUI implements ClientUII, WindowListener {
                 if (isVisible) {
                     JOptionPane.showMessageDialog(null, "请以管理员身份运行! ");
                 }
-                ConsoleLogger.println("请以管理员身份运行,否则可能无法正常工作! ");
+                ConsoleLogger.info("请以管理员身份运行,否则可能无法正常工作! ");
 //                System.exit(0);
             }
         }

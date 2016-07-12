@@ -13,38 +13,33 @@ import java.net.BindException;
 public class FSServer {
 
     private static short routePort = 150;
-    private Route route_udp, route_tcp;
+    private static Route route_udp;
+    private static Route route_tcp;
 
     public static void main(String[] args) {
         try {
-            FSServer fs = new FSServer();
+            ConsoleLogger.info("FinalSpeed Server Starting...");
+
+            //todo read port from the configuration file and set
+
+            route_udp = new Route(routePort, Route.MODE_SERVER, false, true);
+            FireWallUtil.openUdpPort(routePort);
+
+            Route.executor.execute(() -> {
+                try {
+                    route_tcp = new Route(routePort, Route.MODE_SERVER, true, true);
+                    FireWallUtil.openTcpPort(routePort);
+                } catch (Exception e) {
+                    // e.printStackTrace();
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
             if (e instanceof BindException) {
-                ConsoleLogger.println("Udp port already in use.");
+                ConsoleLogger.info("Udp port already in use.");
             }
-            ConsoleLogger.println("Start failed.");
+            ConsoleLogger.info("Start failed.");
         }
-    }
-
-    private FSServer() throws Exception {
-
-        ConsoleLogger.info("FinalSpeed Server Starting...");
-
-        //todo read port from the configuration file and set
-
-        route_udp = new Route(routePort, Route.MODE_SERVER, false, true);
-        FireWallUtil.openUdpPort(routePort);
-
-        Route.executor.execute(() -> {
-            try {
-                route_tcp = new Route(routePort, Route.MODE_SERVER, true, true);
-                FireWallUtil.openTcpPort(routePort);
-            } catch (Exception e) {
-                // e.printStackTrace();
-            }
-        });
-
     }
 
 }

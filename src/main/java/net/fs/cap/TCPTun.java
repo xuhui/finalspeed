@@ -84,8 +84,8 @@ public class TCPTun {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		ConsoleLogger.println("发送第一次握手 " + " ident " + localIdent);
-		ConsoleLogger.println("" + syncPacket);
+		ConsoleLogger.info("发送第一次握手 " + " ident " + localIdent);
+		ConsoleLogger.info("" + syncPacket);
 		
 	}
 
@@ -123,8 +123,8 @@ public class TCPTun {
 					remoteStartSequence=tcpHeader.getSequenceNumber();
 					remoteSequence=remoteStartSequence+1;
 					remoteSequence_max=remoteSequence;
-					ConsoleLogger.println("接收第一次握手 " + remoteAddress.getHostAddress() + ":" + remotePort + "->" + localAddress.getHostAddress() + ":" + localPort + " ident " + ipV4Header.getIdentification());
-					ConsoleLogger.println("" + packet);
+					ConsoleLogger.info("接收第一次握手 " + remoteAddress.getHostAddress() + ":" + remotePort + "->" + localAddress.getHostAddress() + ":" + localPort + " ident " + ipV4Header.getIdentification());
+					ConsoleLogger.info("" + packet);
 					Packet responePacket=PacketUtils.createSyncAck(
 							capEnv.local_mac,
 							capEnv.gateway_mac,
@@ -138,17 +138,17 @@ public class TCPTun {
 						e.printStackTrace();
 					}
 					localSequence=localStartSequence+1;
-					ConsoleLogger.println("发送第二次握手 " + capEnv.local_mac + "->" + capEnv.gateway_mac + " " + localAddress + "->" + " ident " + 0);
+					ConsoleLogger.info("发送第二次握手 " + capEnv.local_mac + "->" + capEnv.gateway_mac + " " + localAddress + "->" + " ident " + 0);
 
-					ConsoleLogger.println("" + responePacket);
+					ConsoleLogger.info("" + responePacket);
 				}
 
 				if(!tcpHeader.getSyn()&&tcpHeader.getAck()){
 					if(tcpPacket.getPayload()==null){
 						//第三次握手,客户端确认
 						if(tcpHeader.getAcknowledgmentNumber()==localSequence){
-							ConsoleLogger.println("接收第三次握手 " + " ident " + ipV4Header.getIdentification());
-							ConsoleLogger.println(packet + "");
+							ConsoleLogger.info("接收第三次握手 " + " ident " + ipV4Header.getIdentification());
+							ConsoleLogger.info(packet + "");
 							Thread t1=new Thread(){
 								public void run(){
 									//startSend(basePacket_server,syc_sequence_client+1);
@@ -158,11 +158,11 @@ public class TCPTun {
 							connectReady=true;
 						}
 					}
-					//MLog.println("客户端响应preview\n "+packet);
-					//MLog.println("request "+tcp.ack());
+					//MLog.info("客户端响应preview\n "+packet);
+					//MLog.info("request "+tcp.ack());
 					sendedTable_server.remove(tcpHeader.getAcknowledgmentNumber());
 					boolean selfAck=selfAckTable.contains(ipV4Header.getIdentification());
-					//MLog.println("客户端确认 "+"selfack "+selfAck+" id "+ipV4Header.getIdentification()+" ack_sequence "+tcpHeader.getAcknowledgmentNumberAsLong()+" "+sendedTable_server.size()+"ppppppp "+tcpHeader);
+					//MLog.info("客户端确认 "+"selfack "+selfAck+" id "+ipV4Header.getIdentification()+" ack_sequence "+tcpHeader.getAcknowledgmentNumberAsLong()+" "+sendedTable_server.size()+"ppppppp "+tcpHeader);
 				}
 				
 			}else {
@@ -183,7 +183,7 @@ public class TCPTun {
 			}
 		}
 		if(tcpHeader.getRst()){
-			ConsoleLogger.println("reset packet " + ipV4Header.getIdentification() + " " + tcpHeader.getSequenceNumber() + " " + remoteAddress.getHostAddress() + ":" + remotePort + "->" + localAddress.getHostAddress() + ":" + localPort + " " + " ident " + ipV4Header.getIdentification());
+			ConsoleLogger.info("reset packet " + ipV4Header.getIdentification() + " " + tcpHeader.getSequenceNumber() + " " + remoteAddress.getHostAddress() + ":" + remotePort + "->" + localAddress.getHostAddress() + ":" + localPort + " " + " ident " + ipV4Header.getIdentification());
 		}
 
 	}
@@ -200,21 +200,21 @@ public class TCPTun {
 			if(!connectReady){
 				if(tcpHeader.getAck()&&tcpHeader.getSyn()){
 					if(tcpHeader.getAcknowledgmentNumber()==(localStartSequence+1)){
-						ConsoleLogger.println("接收第二次握手 " + " ident " + ipV4Header.getIdentification());
-						ConsoleLogger.println("" + packet);
+						ConsoleLogger.info("接收第二次握手 " + " ident " + ipV4Header.getIdentification());
+						ConsoleLogger.info("" + packet);
 						remoteStartSequence=tcpHeader.getSequenceNumber();
 						remoteSequence=remoteStartSequence+1;
 						remoteSequence_max=remoteSequence;
 						Packet p3=PacketUtils.createAck(capEnv.local_mac, capEnv.gateway_mac, capEnv.local_ipv4, localPort, remoteAddress, remotePort, remoteSequence , localSequence,getIdent());
 						try {
 							sendHandle.sendPacket(p3);
-							ConsoleLogger.println("发送第三次握手 " + " ident " + localIdent);
-							ConsoleLogger.println("" + p3);
+							ConsoleLogger.info("发送第三次握手 " + " ident " + localIdent);
+							ConsoleLogger.info("" + p3);
 							connectReady=true;
 							
 							byte[] sim=getSimRequestHead(remotePort);
 							sendData(sim);
-							ConsoleLogger.println("发送请求 " + " ident " + localIdent);
+							ConsoleLogger.info("发送请求 " + " ident " + localIdent);
 						} catch (PcapNativeException e) {
 							e.printStackTrace();
 						} catch (NotOpenException e) {
@@ -226,13 +226,13 @@ public class TCPTun {
 				if(tcpPacket.getPayload()!=null){
 					preDataReady=true;
 					onReceiveDataPacket( tcpPacket, tcpHeader, ipV4Header );
-					ConsoleLogger.println("接收响应 " + " ident " + ipV4Header.getIdentification());
+					ConsoleLogger.info("接收响应 " + " ident " + ipV4Header.getIdentification());
 				}
 			}
 
 		}else {
 			if(tcpPacket.getPayload()!=null){
-				//MLog.println("客户端正式接收数据 "+capClientEnv.vDatagramSocket);
+				//MLog.info("客户端正式接收数据 "+capClientEnv.vDatagramSocket);
 				onReceiveDataPacket( tcpPacket, tcpHeader, ipV4Header );
 				TunData td=new TunData();
 				td.tun=this;
@@ -242,7 +242,7 @@ public class TCPTun {
 			}
 		}
 		if(tcpHeader.getRst()){
-			ConsoleLogger.println("reset packet " + ipV4Header.getIdentification() + " " + tcpHeader.getSequenceNumber() + " " + remoteAddress.getHostAddress() + ":" + remotePort + "->" + localAddress.getHostAddress() + ":" + localPort);
+			ConsoleLogger.info("reset packet " + ipV4Header.getIdentification() + " " + tcpHeader.getSequenceNumber() + " " + remoteAddress.getHostAddress() + ":" + remotePort + "->" + localAddress.getHostAddress() + ":" + localPort);
 		}
 
 	}

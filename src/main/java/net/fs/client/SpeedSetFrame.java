@@ -86,9 +86,9 @@ public class SpeedSetFrame extends JDialog{
 		setLocationRelativeTo(parent);
 		if(ui.isVisible){
 			setVisible(true);
-			//MLog.println("请在client_config.json中设置带宽");
+			//MLog.info("请在client_config.json中设置带宽");
 		} else {
-			//MLog.println("请在client_config.json中设置带宽");
+			//MLog.info("请在client_config.json中设置带宽");
 			//System.exit(0);
 		}
 	}

@@ -112,7 +112,7 @@ public class CapEnv {
                     }
                 }
             } else if (packet_eth.getPayload() instanceof IllegalPacket) {
-                ConsoleLogger.println("IllegalPacket!!!");
+                ConsoleLogger.info("IllegalPacket!!!");
             }
         }
 
@@ -134,7 +134,7 @@ public class CapEnv {
         boolean success = false;
         detectInterface();
         List<PcapNetworkInterface> allDevs = Pcaps.findAllDevs();
-        ConsoleLogger.println("Network Interface List: ");
+        ConsoleLogger.info("Network Interface List: ");
         for (PcapNetworkInterface pi : allDevs) {
             String desString = "";
             if (pi.getDescription() != null) {
@@ -262,7 +262,7 @@ public class CapEnv {
                                     if (pi.getDescription() != null) {
                                         selectedInterfaceDes = pi.getDescription();
                                     }
-                                    //MLog.println("local_mac_tcp1 "+gateway_mac+" gateway_mac "+gateway_mac+" local_ipv4 "+local_ipv4);
+                                    //MLog.info("local_mac_tcp1 "+gateway_mac+" gateway_mac "+gateway_mac+" local_ipv4 "+local_ipv4);
                                 }
                                 String dstHostAddress = ipV4Header.getDstAddr().getHostAddress();
                                 if (testIp_tcp.equals(dstHostAddress) || testIp_udp.equals(dstHostAddress)) {
@@ -327,7 +327,7 @@ public class CapEnv {
                 System.arraycopy(pppData, 8, ipData, 0, ipLength);
                 ipV4Packet = IpV4Packet.newPacket(ipData, 0, ipData.length);
             } else {
-                ConsoleLogger.println("长度不符!");
+                ConsoleLogger.info("长度不符!");
             }
         }
         return ipV4Packet;
@@ -376,7 +376,7 @@ public class CapEnv {
             }
         }
         if (address == null) {
-            ConsoleLogger.println("域名解析失败,请检查DNS设置!");
+            ConsoleLogger.info("域名解析失败,请检查DNS设置!");
         }
         final int por = 80;
         testIp_tcp = address.getHostAddress();
