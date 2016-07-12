@@ -37,7 +37,7 @@ public class Route {
     public static int localDownloadSpeed, localUploadSpeed;
 
     //todo need to optimize
-    private static List<Trafficlistener> listenerList = new Vector<Trafficlistener>();
+    private static List<Trafficlistener> listenerList = new Vector<>();
 
     public Map<Integer, ConnectionUDP> connTable = new HashMap<>();
     public AckListManage delayAckManage;
