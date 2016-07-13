@@ -80,7 +80,7 @@ public class CapEnv {
 
         IpV4Packet ipV4Packet = null;
         if (ppp) {
-            ipV4Packet = getIpV4Packet_pppoe(packet_eth);
+            ipV4Packet = getIpV4PacketFromPppoeInEthernetPacket(packet_eth);
         } else {
             if (packet_eth.getPayload() instanceof IpV4Packet) {
                 ipV4Packet = (IpV4Packet) packet_eth.getPayload();
@@ -112,7 +112,7 @@ public class CapEnv {
                     }
                 }
             } else if (packet_eth.getPayload() instanceof IllegalPacket) {
-                ConsoleLogger.info("IllegalPacket!!!");
+                ConsoleLogger.error("IllegalPacket!!!");
             }
         }
 
@@ -220,6 +220,8 @@ public class CapEnv {
             allDevs = Pcaps.findAllDevs();
         } catch (PcapNativeException e) {
             e.printStackTrace();
+            ConsoleLogger.error("Pcaps.findAllDevs() failed!, JVM exit!");
+            System.exit(-1);
             return;
         }
 
@@ -245,7 +247,7 @@ public class CapEnv {
                             IpV4Header ipV4Header = null;
 
                             if (ppp) {
-                                ipV4Packet = getIpV4Packet_pppoe(ethernetPacket);
+                                ipV4Packet = getIpV4PacketFromPppoeInEthernetPacket(ethernetPacket);
                             } else {
                                 if (ethernetPacket.getPayload() instanceof IpV4Packet) {
                                     ipV4Packet = (IpV4Packet) ethernetPacket.getPayload();
@@ -311,13 +313,14 @@ public class CapEnv {
         }
     }
 
-    IpV4Packet getIpV4Packet_pppoe(EthernetPacket packet_eth) throws IllegalRawDataException {
+    private IpV4Packet getIpV4PacketFromPppoeInEthernetPacket(EthernetPacket packet_eth) throws IllegalRawDataException {
         IpV4Packet ipV4Packet = null;
         byte[] pppData = packet_eth.getPayload().getRawData();
+        // not use pppData[6] and pppData[7]
         if (pppData.length > 8 && pppData[8] == 0x45) {
             byte[] b2 = new byte[2];
             System.arraycopy(pppData, 4, b2, 0, 2);
-            short len = (short) ByteShortConvert.toShort(b2, 0);
+            short len = ByteShortConvert.toShort(b2, 0);
             int ipLength = toUnsigned(len) - 2;
             byte[] ipData = new byte[ipLength];
             //设置ppp参数
