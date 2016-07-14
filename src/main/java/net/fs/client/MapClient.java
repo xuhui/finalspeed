@@ -6,6 +6,7 @@ import net.fs.rudp.ClientProcessorInterface;
 import net.fs.rudp.Route;
 import net.fs.rudp.TrafficEvent;
 import net.fs.rudp.Trafficlistener;
+import net.fs.utils.ConsoleLogger;
 import net.fs.utils.NetStatus;
 
 import java.io.*;
@@ -111,9 +112,7 @@ public class MapClient implements Trafficlistener {
     }
 
     private void updateUISpeed() {
-        if (ui != null) {
-            ui.updateUISpeed(connNum, netStatus.getDownSpeed(), netStatus.getUpSpeed());
-        }
+        ConsoleLogger.info("connNum: "+connNum+" DownSpeed: "+netStatus.getDownSpeed()+" UpSpeed: "+netStatus.getUpSpeed());
     }
 
     public void setMapServer(String serverAddress, int serverPort, int remotePort, String passwordMd5, String password_proxy_Md5, boolean direct_cn, boolean tcp,
@@ -148,39 +147,10 @@ public class MapClient implements Trafficlistener {
         String ip;
         try {
             ip = InetAddress.getByName(serverAddress).getHostAddress();
-            if (systemName.contains("mac os")) {
-                if (ui.isOsx_fw_pf()) {
-                    String tempPath = "./pf.conf";
-                    File f = new File(tempPath);
-                    File d = f.getParentFile();
-                    if (!d.exists()) {
-                        d.mkdirs();
-                    }
-                    if (f.exists()) {
-                        f.delete();
-                    }
-                    //必须换行结束
-                    String content = "block drop quick proto tcp from any to " + ip + " port = " + serverPort + "\n";
-                    saveFile(content.getBytes(), tempPath);
-
-                    String cmd1 = "pfctl -d";
-                    runCommand(cmd1);
-
-                    String cmd2 = "pfctl -Rf " + f.getAbsolutePath();
-                    runCommand(cmd2);
-
-                    String cmd3 = "pfctl -e";
-                    runCommand(cmd3);
-
-                    //f.delete();
-                } else if (ui.isOsx_fw_ipfw()) {
-                    String cmd2 = "sudo ipfw add 5050 deny tcp from any to " + ip + " " + serverAddress + " out";
-                    runCommand(cmd2);
-                }
-            } else if (systemName.contains("linux")) {
+            if (systemName.contains("linux")) {
                 String cmd2 = "iptables -t filter -A OUTPUT -d " + ip + " -p tcp --dport " + serverPort + " -j DROP -m comment --comment tcptun_fs ";
                 runCommand(cmd2);
-            } else if (systemName.contains("windows")) {
+            }else if (systemName.contains("windows")) {
                 try {
                     if (systemName.contains("xp") || systemName.contains("2003")) {
                         String cmd_add1 = "ipseccmd -w REG -p \"tcptun_fs\" -r \"Block TCP/" + serverPort + "\" -f 0/255.255.255.255=" + ip + "/255.255.255.255:" + serverPort + ":tcp -n BLOCK -x ";
@@ -344,20 +314,6 @@ public class MapClient implements Trafficlistener {
         synchronized (syn_process) {
             processTable.remove(process);
         }
-    }
-
-    synchronized public void closeAndTryConnect_Login(boolean testSpeed) {
-        close();
-        boolean loginOK = ui.login();
-        if (loginOK) {
-            ui.updateNode(testSpeed);
-            //testPool();
-        }
-    }
-
-    synchronized public void closeAndTryConnect() {
-        close();
-        //testPool();
     }
 
     public void close() {

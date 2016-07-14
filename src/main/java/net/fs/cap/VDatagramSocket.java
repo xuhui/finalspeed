@@ -17,20 +17,14 @@ public class VDatagramSocket extends DatagramSocket {
 
     private LinkedBlockingQueue<TunData> packetQueue = new LinkedBlockingQueue<>();
 
-    CapEnv capEnv;
+    private CapEnv capEnv;
 
-    int localPort;
+    private Object syn_tun = new Object();
 
-    Object syn_tun = new Object();
-
-    boolean tunConnecting = false;
+    private boolean tunConnecting = false;
 
     public VDatagramSocket() throws SocketException {
 
-    }
-
-    public VDatagramSocket(int port) throws SocketException {
-        localPort = port;
     }
 
     public void send(DatagramPacket p) throws IOException {
@@ -63,7 +57,7 @@ public class VDatagramSocket extends DatagramSocket {
     }
 
 
-    void tryConnectTun_Client(InetAddress dstAddress, short dstPort) {
+    private void tryConnectTun_Client(InetAddress dstAddress, short dstPort) {
         synchronized (syn_tun) {
             if (capEnv.tcpManager.getDefaultTcpTun() == null) {
                 if (tunConnecting) {
@@ -84,7 +78,6 @@ public class VDatagramSocket extends DatagramSocket {
             }
         }
     }
-
 
     public synchronized void receive(DatagramPacket p) throws IOException {
         TunData td = null;

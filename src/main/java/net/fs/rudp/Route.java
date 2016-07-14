@@ -63,7 +63,7 @@ public class Route {
         if (useTcpTun) {
             if (this.mode == MODE_SERVER) {
                 //服务端
-                VDatagramSocket d = new VDatagramSocket(routePort);
+                VDatagramSocket d = new VDatagramSocket();
                 d.setClient(false);
                 capEnv = new CapEnv(false, tcpEnvSuccess);
                 capEnv.setListenPort(routePort);

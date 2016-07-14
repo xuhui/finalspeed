@@ -138,72 +138,7 @@ public class ClientNoUI implements ClientUII{
 			}
 		}
 	}
-	
-	public void updateUISpeed(int conn,int downloadSpeed,int uploadSpeed){
-//		String string="连接数:"+conn+" 下载:"+Tools.getSizeStringKB(downloadSpeed)+"/S"
-//				+" 上传:"+Tools.getSizeStringKB(uploadSpeed)+"/S";
-//		if(downloadSpeedField!=null){
-//			downloadSpeedField.setText(string);
-//		}
-	}
 
-	JButton createButton(String name){
-		JButton button=new JButton(name);
-		button.setMargin(new Insets(0,5,0,5));
-		button.setFocusPainted(false);
-		return button;
-	}
-	
-	
-	void initUI(){
-		SwingUtilities.invokeLater(new Runnable() {
-
-			public void run() {
-				Font font = new Font("宋体",Font.PLAIN,12);   
-				UIManager.put("ToolTip.font",font);   
-				UIManager.put("Table.font",font);   
-				UIManager.put("TableHeader.font",font);   
-				UIManager.put("TextField.font",font);   
-				UIManager.put("ComboBox.font",font);   
-				UIManager.put("TextField.font",font);   
-				UIManager.put("PasswordField.font",font);
-				UIManager.put("TextArea.font,font",font);
-				UIManager.put("TextPane.font",font);
-				UIManager.put("EditorPane.font",font);   
-				UIManager.put("FormattedTextField.font",font);   
-				UIManager.put("Button.font",font);   
-				UIManager.put("CheckBox.font",font);   
-				UIManager.put("RadioButton.font",font);   
-				UIManager.put("ToggleButton.font",font);   
-				UIManager.put("ProgressBar.font",font);   
-				UIManager.put("DesktopIcon.font",font);   
-				UIManager.put("TitledBorder.font",font);   
-				UIManager.put("Label.font",font);   
-				UIManager.put("List.font",font);   
-				UIManager.put("TabbedPane.font",font);   
-				UIManager.put("MenuBar.font",font);   
-				UIManager.put("Menu.font",font);   
-				UIManager.put("MenuItem.font",font);   
-				UIManager.put("PopupMenu.font",font);   
-				UIManager.put("CheckBoxMenuItem.font",font);
-				UIManager.put("RadioButtonMenuItem.font",font);
-				UIManager.put("Spinner.font",font);
-				UIManager.put("Tree.font",font);
-				UIManager.put("ToolBar.font",font);
-				UIManager.put("OptionPane.messageFont",font);
-				UIManager.put("OptionPane.buttonFont",font);
-				
-				ToolTipManager.sharedInstance().setInitialDelay(200);
-			}
-
-		});
-	}
-
-	@Override
-	public boolean login() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public boolean updateNode(boolean testSpeed) {
@@ -211,15 +146,4 @@ public class ClientNoUI implements ClientUII{
 		return false;
 	}
 
-	@Override
-	public boolean isOsx_fw_pf() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isOsx_fw_ipfw() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

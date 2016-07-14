@@ -20,8 +20,6 @@ public class TunManager {
 
     TCPTun defaultTcpTun;
 
-    Object syn_scan = new Object();
-
     CapEnv capEnv;
 
     {
@@ -42,9 +40,7 @@ public class TunManager {
     }
 
     private void scan() {
-        Iterator<String> it = connTable.keySet().iterator();
-        while (it.hasNext()) {
-            String key = it.next();
+        for (String key : connTable.keySet()) {
             TCPTun tun = connTable.get(key);
             if (tun != null) {
                 if (tun.preDataReady) {
@@ -67,7 +63,7 @@ public class TunManager {
         }
     }
 
-    public void removeTun(TCPTun tun) {
+    void removeTun(TCPTun tun) {
         connTable.remove(tun.key);
     }
 
@@ -75,11 +71,11 @@ public class TunManager {
         return tunManager;
     }
 
-    public TCPTun getTcpConnection_Client(String remoteAddress, short remotePort, short localPort) {
+    TCPTun getTcpConnection_Client(String remoteAddress, short remotePort, short localPort) {
         return connTable.get(remoteAddress + ":" + remotePort + ":" + localPort);
     }
 
-    public void addConnection_Client(TCPTun conn) {
+    void addConnection_Client(TCPTun conn) {
         String key = conn.remoteAddress.getHostAddress() + ":" + conn.remotePort + ":" + conn.localPort;
         //MLog.info("addConnection "+key);
         conn.setKey(key);
@@ -87,11 +83,11 @@ public class TunManager {
         connTable.putIfAbsent(key, conn);
     }
 
-    public TCPTun getTcpConnection_Server(String remoteAddress, short remotePort) {
+    TCPTun getTcpConnection_Server(String remoteAddress, short remotePort) {
         return connTable.get(remoteAddress + ":" + remotePort);
     }
 
-    public void addConnection_Server(TCPTun conn) {
+    void addConnection_Server(TCPTun conn) {
         String key = conn.remoteAddress.getHostAddress() + ":" + conn.remotePort;
         //MLog.info("addConnection "+key);
         conn.setKey(key);
@@ -99,11 +95,11 @@ public class TunManager {
         connTable.putIfAbsent(key, conn);
     }
 
-    public TCPTun getDefaultTcpTun() {
+    TCPTun getDefaultTcpTun() {
         return defaultTcpTun;
     }
 
-    public void setDefaultTcpTun(TCPTun defaultTcpTun) {
+    void setDefaultTcpTun(TCPTun defaultTcpTun) {
         this.defaultTcpTun = defaultTcpTun;
     }
 

@@ -74,16 +74,16 @@ public class CapEnv {
         tcpManager = new TunManager(this);
     }
 
-    void processPacket(Packet packet) throws Exception {
-        EthernetPacket packet_eth = (EthernetPacket) packet;
-        EthernetHeader head_eth = packet_eth.getHeader();
+    private void processPacket(Packet packet) throws Exception {
+        EthernetPacket ethernetPacket = (EthernetPacket) packet;
+        EthernetHeader ethernetHeader = ethernetPacket.getHeader();
 
         IpV4Packet ipV4Packet = null;
         if (ppp) {
-            ipV4Packet = getIpV4PacketFromPppoeInEthernetPacket(packet_eth);
+            ipV4Packet = getIpV4PacketFromPppoeInEthernetPacket(ethernetPacket);
         } else {
-            if (packet_eth.getPayload() instanceof IpV4Packet) {
-                ipV4Packet = (IpV4Packet) packet_eth.getPayload();
+            if (ethernetPacket.getPayload() instanceof IpV4Packet) {
+                ipV4Packet = (IpV4Packet) ethernetPacket.getPayload();
             }
         }
         if (ipV4Packet != null) {
@@ -94,7 +94,7 @@ public class CapEnv {
                 if (isClient) {
                     TCPTun conn = tcpManager.getTcpConnection_Client(ipV4Header.getSrcAddr().getHostAddress(), tcpHeader.getSrcPort().value(), tcpHeader.getDstPort().value());
                     if (conn != null) {
-                        conn.process_client(this, packet, head_eth, ipV4Header, tcpPacket, false);
+                        conn.process_client(this, packet, ethernetHeader, ipV4Header, tcpPacket, false);
                     }
                 } else {
                     TCPTun conn = null;
@@ -107,11 +107,11 @@ public class CapEnv {
                         }
                         conn = tcpManager.getTcpConnection_Server(ipV4Header.getSrcAddr().getHostAddress(), tcpHeader.getSrcPort().value());
                         if (conn != null) {
-                            conn.process_server(packet, head_eth, ipV4Header, tcpPacket, true);
+                            conn.process_server(packet, ethernetHeader, ipV4Header, tcpPacket, true);
                         }
                     }
                 }
-            } else if (packet_eth.getPayload() instanceof IllegalPacket) {
+            } else if (ethernetPacket.getPayload() instanceof IllegalPacket) {
                 ConsoleLogger.error("IllegalPacket!!!");
             }
         }
