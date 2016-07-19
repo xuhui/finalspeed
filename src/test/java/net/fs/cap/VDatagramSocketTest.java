@@ -12,10 +12,6 @@ public class VDatagramSocketTest {
     @Test
     public void test() throws SocketException {
 
-        System.out.println("hehe");
-
-        VDatagramSocket d = new VDatagramSocket(150);
-
     }
 
 }

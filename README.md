@@ -20,7 +20,7 @@ clien_config.json
     // 下载速度，单位是 B，字节。这里换算起来就是 11MB。请把这里改成本机的下载速度
     "download_speed": 11200698, 
     // 协议：tcp 或 udp。注意：服务端如果是 OpenVZ 架构的话，则只支持 udp。
-    "protocal": "udp", 
+    "protocol": "udp",
     // 服务器地址
     "server_address": "1.2.3.4", 
     // 一般不需要更改，保持默认即可。
