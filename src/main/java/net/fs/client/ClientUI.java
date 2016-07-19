@@ -6,7 +6,6 @@ import com.alibaba.fastjson.JSON;
 import net.fs.utils.ConsoleLogger;
 import org.apache.commons.lang3.SystemUtils;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,7 +28,7 @@ public class ClientUI implements ClientUII {
 
         try {
             mapClient = new MapClient(this);
-        } catch (final Exception e1) {
+        } catch (Exception e1) {
             e1.printStackTrace();
             //System.exit(0);
         }

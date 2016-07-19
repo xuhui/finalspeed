@@ -16,6 +16,8 @@ import java.util.HashSet;
 
 public class MapClient implements Trafficlistener {
 
+    private static final int monPort = 25874;
+
     Route route_udp, route_tcp;
 
     short routePort = 45;
@@ -48,8 +50,6 @@ public class MapClient implements Trafficlistener {
 
     PortMapManager portMapManager;
 
-    static int monPort = 25874;
-
     String systemName = System.getProperty("os.name").toLowerCase();
 
     boolean useTcp = true;
@@ -58,20 +58,20 @@ public class MapClient implements Trafficlistener {
         this.ui = ui;
         mapClient = this;
         try {
-            final ServerSocket socket = new ServerSocket(monPort);
+            ServerSocket socket = new ServerSocket(monPort);
             new Thread() {
                 public void run() {
                     try {
                         socket.accept();
                     } catch (IOException e) {
                         e.printStackTrace();
-                        System.exit(0);
+                        System.exit(-1);
                     }
                 }
             }.start();
         } catch (Exception e) {
-            //e.printStackTrace();
-            System.exit(0);
+            e.printStackTrace();
+            System.exit(-1);
         }
         try {
             route_tcp = new Route(routePort, Route.MODE_CLIENT, true);
@@ -112,7 +112,7 @@ public class MapClient implements Trafficlistener {
     }
 
     private void updateUISpeed() {
-        ConsoleLogger.info("connNum: "+connNum+" DownSpeed: "+netStatus.getDownSpeed()+" UpSpeed: "+netStatus.getUpSpeed());
+        ConsoleLogger.info("connNum: " + connNum + " DownSpeed: " + netStatus.getDownSpeed() + " UpSpeed: " + netStatus.getUpSpeed());
     }
 
     public void setMapServer(String serverAddress, int serverPort, int remotePort, String passwordMd5, String password_proxy_Md5, boolean direct_cn, boolean tcp,
@@ -150,7 +150,7 @@ public class MapClient implements Trafficlistener {
             if (systemName.contains("linux")) {
                 String cmd2 = "iptables -t filter -A OUTPUT -d " + ip + " -p tcp --dport " + serverPort + " -j DROP -m comment --comment tcptun_fs ";
                 runCommand(cmd2);
-            }else if (systemName.contains("windows")) {
+            } else if (systemName.contains("windows")) {
                 try {
                     if (systemName.contains("xp") || systemName.contains("2003")) {
                         String cmd_add1 = "ipseccmd -w REG -p \"tcptun_fs\" -r \"Block TCP/" + serverPort + "\" -f 0/255.255.255.255=" + ip + "/255.255.255.255:" + serverPort + ":tcp -n BLOCK -x ";
