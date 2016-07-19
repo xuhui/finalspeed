@@ -54,7 +54,7 @@ public class MapClient implements Trafficlistener {
 
     boolean useTcp = true;
 
-    MapClient(ClientUI ui, boolean tcpEnvSuccess) throws Exception {
+    MapClient(ClientUI ui) throws Exception {
         this.ui = ui;
         mapClient = this;
         try {
@@ -74,13 +74,13 @@ public class MapClient implements Trafficlistener {
             System.exit(0);
         }
         try {
-            route_tcp = new Route(routePort, Route.MODE_CLIENT, true, tcpEnvSuccess);
+            route_tcp = new Route(routePort, Route.MODE_CLIENT, true);
         } catch (Exception e1) {
             //e1.printStackTrace();
             throw e1;
         }
         try {
-            route_udp = new Route(routePort, Route.MODE_CLIENT, false, tcpEnvSuccess);
+            route_udp = new Route(routePort, Route.MODE_CLIENT, false);
         } catch (Exception e1) {
             //e1.printStackTrace();
             throw e1;

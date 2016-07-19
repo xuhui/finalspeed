@@ -64,13 +64,10 @@ public class CapEnv {
 
     public boolean tcpEnable = false;
 
-    public boolean fwSuccess = true;
-
     private boolean ppp = false;
 
-    public CapEnv(boolean isClient, boolean fwSuccess) {
+    public CapEnv(boolean isClient) {
         this.isClient = isClient;
-        this.fwSuccess = fwSuccess;
         tcpManager = new TunManager(this);
     }
 
@@ -154,9 +151,7 @@ public class CapEnv {
             }
             success = true;
             ConsoleLogger.info("Selected Network Interface:\n" + "  " + desString + "   " + nif.getName());
-            if (fwSuccess) {
-                tcpEnable = true;
-            }
+            tcpEnable = true;
         } else {
             tcpEnable = false;
             ConsoleLogger.info("Select Network Interface failed,can't use TCP protocal!\n");

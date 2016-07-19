@@ -57,7 +57,7 @@ public class Route {
         delayAckManage = new AckListManage();
     }
 
-    public Route(short routePort, int mode, boolean tcp, boolean tcpEnvSuccess) throws Exception {
+    public Route(short routePort, int mode, boolean tcp) throws Exception {
         this.mode = mode;
         useTcpTun = tcp;
         if (useTcpTun) {
@@ -65,7 +65,7 @@ public class Route {
                 //服务端
                 VDatagramSocket d = new VDatagramSocket();
                 d.setClient(false);
-                capEnv = new CapEnv(false, tcpEnvSuccess);
+                capEnv = new CapEnv(false);
                 capEnv.setListenPort(routePort);
                 capEnv.initInterface();
                 d.setCapEnv(capEnv);
@@ -75,7 +75,7 @@ public class Route {
                 //客户端
                 VDatagramSocket d = new VDatagramSocket();
                 d.setClient(true);
-                capEnv = new CapEnv(true, tcpEnvSuccess);
+                capEnv = new CapEnv(true);
                 capEnv.initInterface();
                 d.setCapEnv(capEnv);
 

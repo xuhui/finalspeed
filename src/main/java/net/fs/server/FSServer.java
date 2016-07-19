@@ -20,12 +20,12 @@ public class FSServer {
 
             //todo read port from the configuration file and set
 
-            route_udp = new Route(routePort, Route.MODE_SERVER, false, true);
+            route_udp = new Route(routePort, Route.MODE_SERVER, false);
             FireWallUtil.allowUdpPort(routePort);
 
             Route.executor.execute(() -> {
                 try {
-                    route_tcp = new Route(routePort, Route.MODE_SERVER, true, true);
+                    route_tcp = new Route(routePort, Route.MODE_SERVER, true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

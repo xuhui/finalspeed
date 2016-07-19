@@ -4,6 +4,7 @@ package net.fs.client;
 
 import com.alibaba.fastjson.JSON;
 import net.fs.utils.ConsoleLogger;
+import org.apache.commons.lang3.SystemUtils;
 
 import javax.swing.*;
 import java.io.File;
@@ -14,17 +15,11 @@ import java.nio.file.Paths;
 public class ClientUI implements ClientUII {
 
 
-    MapClient mapClient;
+    private MapClient mapClient;
 
     private ClientConfig config = null;
 
     public static ClientUI ui;
-
-    Exception capException = null;
-
-    String systemName = System.getProperty("os.name");
-
-    public boolean isVisible = true;
 
     ClientUI() {
 
@@ -33,10 +28,9 @@ public class ClientUI implements ClientUII {
         loadConfigFromJson();
 
         try {
-            mapClient = new MapClient(this, true);
+            mapClient = new MapClient(this);
         } catch (final Exception e1) {
             e1.printStackTrace();
-            capException = e1;
             //System.exit(0);
         }
 
@@ -49,7 +43,7 @@ public class ClientUI implements ClientUII {
 
     // TODO: 7/19/2016 need to optimize
     private void checkRunAsAdministrator() {
-        if (systemName.contains("windows")) {
+        if (SystemUtils.IS_OS_WINDOWS) {
             boolean b;
             File file = new File(System.getenv("WINDIR") + "\\test.file");
             //System.out.info("kkkkkkk "+file.getAbsolutePath());
@@ -62,11 +56,7 @@ public class ClientUI implements ClientUII {
             file.delete();
 
             if (!b) {
-                //mainFrame.setVisible(true);
-                if (isVisible) {
-                    JOptionPane.showMessageDialog(null, "请以管理员身份运行! ");
-                }
-                ConsoleLogger.error("请以管理员身份运行,否则可能无法正常工作! ");
+                ConsoleLogger.error("请以管理员身份运行");
                 System.exit(-1);
             }
         }
