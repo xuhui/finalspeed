@@ -14,6 +14,10 @@ import java.util.Optional;
  */
 public class Command {
 
+    private Command() {
+
+    }
+
     public static void execute(String command) {
 
         try {

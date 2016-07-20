@@ -6,6 +6,10 @@ import java.net.DatagramPacket;
 
 public class MessageCheck {
 
+    private MessageCheck() {
+
+    }
+
     public static int checkVer(DatagramPacket dp) {
         return ByteShortConvert.toShort(dp.getData(), 0);
     }

@@ -2,6 +2,8 @@
 
 package net.fs.rudp;
 
+import net.fs.utils.ConsoleLogger;
+
 public class UDPInputStream {
 
     Receiver receiver;
@@ -15,17 +17,20 @@ public class UDPInputStream {
         receiver = conn.receiver;
     }
 
-    public int read(byte[] b, int off, int len) throws ConnectException, InterruptedException {
+    public int read(byte[] b, int off, int len) throws InterruptedException {
         byte[] b2 = read2();
         if (len < b2.length) {
-            throw new ConnectException("error5");
+            ConsoleLogger.error("error5");
+            System.exit(-1);
+            //todo need to optimize
+            return 0;
         } else {
             System.arraycopy(b2, 0, b, off, b2.length);
             return b2.length;
         }
     }
 
-    public byte[] read2() throws ConnectException, InterruptedException {
+    public byte[] read2() throws InterruptedException {
         return receiver.receive();
     }
 

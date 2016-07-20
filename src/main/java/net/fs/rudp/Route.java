@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
@@ -57,13 +58,20 @@ public class Route {
         delayAckManage = new AckListManage();
     }
 
-    public Route(short routePort, int mode, boolean tcp) throws Exception {
+    public Route(short routePort, int mode, boolean tcp) {
         this.mode = mode;
         useTcpTun = tcp;
         if (useTcpTun) {
             if (this.mode == MODE_SERVER) {
                 //服务端
-                VDatagramSocket d = new VDatagramSocket();
+                VDatagramSocket d = null;
+                try {
+                    d = new VDatagramSocket();
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                    ConsoleLogger.error(e.getMessage());
+                    System.exit(-1);
+                }
                 d.setClient(false);
                 capEnv = new CapEnv(false);
                 capEnv.setListenPort(routePort);
@@ -73,7 +81,14 @@ public class Route {
                 datagramSocket = d;
             } else {
                 //客户端
-                VDatagramSocket d = new VDatagramSocket();
+                VDatagramSocket d = null;
+                try {
+                    d = new VDatagramSocket();
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                    ConsoleLogger.error(e.getMessage());
+                    System.exit(-1);
+                }
                 d.setClient(true);
                 capEnv = new CapEnv(true);
                 capEnv.initInterface();
@@ -84,9 +99,21 @@ public class Route {
         } else {
             if (this.mode == Route.MODE_SERVER) {
                 ConsoleLogger.info("Listen udp port: " + routePort);
-                datagramSocket = new DatagramSocket(routePort);
+                try {
+                    datagramSocket = new DatagramSocket(routePort);
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                    ConsoleLogger.error(e.getMessage());
+                    System.exit(-1);
+                }
             } else {
-                datagramSocket = new DatagramSocket();
+                try {
+                    datagramSocket = new DatagramSocket();
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                    ConsoleLogger.error(e.getMessage());
+                    System.exit(-1);
+                }
             }
         }
 

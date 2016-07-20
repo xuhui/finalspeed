@@ -127,10 +127,17 @@ public class CapEnv {
         return mode;
     }
 
-    public boolean initInterface() throws Exception {
+    public boolean initInterface() {
         boolean success = false;
         detectInterface();
-        List<PcapNetworkInterface> allDevs = Pcaps.findAllDevs();
+        List<PcapNetworkInterface> allDevs = null;
+        try {
+            allDevs = Pcaps.findAllDevs();
+        } catch (PcapNativeException e) {
+            e.printStackTrace();
+            ConsoleLogger.error(e.getMessage());
+            System.exit(-1);
+        }
         ConsoleLogger.info("Network Interface List: ");
         for (PcapNetworkInterface pi : allDevs) {
             String desString = "";
@@ -157,7 +164,13 @@ public class CapEnv {
             ConsoleLogger.info("Select Network Interface failed,can't use TCP protocal!\n");
         }
         if (tcpEnable) {
-            sendHandle = nif.openLive(SNAPLEN, getMode(nif), READ_TIMEOUT);
+            try {
+                sendHandle = nif.openLive(SNAPLEN, getMode(nif), READ_TIMEOUT);
+            } catch (PcapNativeException e) {
+                e.printStackTrace();
+                ConsoleLogger.error(e.getMessage());
+                System.exit(-1);
+            }
 //			final PcapHandle handle= nif.openLive(SNAPLEN, getMode(nif), READ_TIMEOUT);
 
             String filter = "";
@@ -168,7 +181,13 @@ public class CapEnv {
                 //客户端
                 filter = "tcp";
             }
-            sendHandle.setFilter(filter, BpfCompileMode.OPTIMIZE);
+            try {
+                sendHandle.setFilter(filter, BpfCompileMode.OPTIMIZE);
+            } catch (PcapNativeException | NotOpenException e) {
+                e.printStackTrace();
+                ConsoleLogger.error(e.getMessage());
+                System.exit(-1);
+            }
 
             final PacketListener listener = new PacketListener() {
                 @Override

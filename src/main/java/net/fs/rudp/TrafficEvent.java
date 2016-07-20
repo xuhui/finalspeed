@@ -3,58 +3,32 @@
 package net.fs.rudp;
 
 public class TrafficEvent {
-	
-	long eventId;
-	
-	int traffic;
 
-	public static int type_downloadTraffic=10;
-	
-	public static int type_uploadTraffic=11;
-	
-	int type=type_downloadTraffic;
-	
-	String userId;
-	
-	TrafficEvent(long eventId,int traffic,int type){
-		this(null,eventId,traffic,type);
-	}
-	
-	public TrafficEvent(String userId,long eventId,int traffic,int type){
-		this.userId=userId;
-		this.eventId=eventId;
-		this.traffic=traffic;
-		this.type=type;
-	}
-	
-	public String getUserId() {
-		return userId;
-	}
+    long eventId;
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+    int traffic;
 
-	public int getType() {
-		return type;
-	}
+    public static int type_downloadTraffic = 10;
 
-	public long getEventId() {
-		return eventId;
-	}
+    public static int type_uploadTraffic = 11;
 
-	public void setEventId(long eventId) {
-		this.eventId = eventId;
-	}
+    int type = type_downloadTraffic;
 
-	public int getTraffic() {
-		return traffic;
-	}
+    String userId;
 
-	public void setTraffic(int traffic) {
-		this.traffic = traffic;
-	}
-	
-	
-	
+    public TrafficEvent(String userId, long eventId, int traffic, int type) {
+        this.userId = userId;
+        this.eventId = eventId;
+        this.traffic = traffic;
+        this.type = type;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public int getTraffic() {
+        return traffic;
+    }
+
 }

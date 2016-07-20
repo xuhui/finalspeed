@@ -15,26 +15,17 @@ public class FSServer {
     private static Route route_tcp;
 
     public static void main(String[] args) {
-        try {
-            ConsoleLogger.info("FinalSpeed Server Starting...");
 
-            //todo read port from the configuration file and set
+        ConsoleLogger.info("FinalSpeed Server Starting...");
 
-            route_udp = new Route(routePort, Route.MODE_SERVER, false);
-            FireWallUtil.allowUdpPort(routePort);
+        route_udp = new Route(routePort, Route.MODE_SERVER, false);
+        FireWallUtil.allowUdpPort(routePort);
 
-            Route.executor.execute(() -> {
-                try {
-                    route_tcp = new Route(routePort, Route.MODE_SERVER, true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                FireWallUtil.blockTcpPort(routePort);
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-            ConsoleLogger.info("Start failed.");
-        }
+        Route.executor.execute(() -> {
+            route_tcp = new Route(routePort, Route.MODE_SERVER, true);
+            FireWallUtil.blockTcpPort(routePort);
+        });
+
     }
 
 }

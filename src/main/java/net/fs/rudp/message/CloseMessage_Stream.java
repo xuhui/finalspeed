@@ -2,22 +2,15 @@
 
 package net.fs.rudp.message;
 
-
-import java.net.DatagramPacket;
-
 import net.fs.utils.ByteIntConvert;
 import net.fs.utils.ByteShortConvert;
 
-
-
-
-
+import java.net.DatagramPacket;
 
 public class CloseMessage_Stream extends Message{
 	
 	public short sType=net.fs.rudp.message.MessageType.sType_CloseMessage_Stream;
 	
-	byte [] data;
 	byte [] dpData;
 	
 	int closeOffset;

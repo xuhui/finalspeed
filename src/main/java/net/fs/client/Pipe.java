@@ -12,21 +12,13 @@ import java.io.OutputStream;
 
 public class Pipe {
 
-
-    int lastTime = -1;
-
-
     boolean readed = false;
-
-    public Pipe p2;
 
     byte[] pv;
 
     int pvl;
 
     int readedLength;
-
-    String successMessage;
 
     int dstPort = -1;
 
@@ -44,27 +36,12 @@ public class Pipe {
         }
     }
 
-
-    void sendSleep(long startTime, int speed, int length) {
-        long needTime = (long) (1000f * length / speed);
-        long usedTime = System.currentTimeMillis() - startTime;
-        if (usedTime < needTime) {
-            try {
-                Thread.sleep(needTime - usedTime);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
     public void pipe(UDPInputStream tis, OutputStream os, int maxSpeed, ConnectionUDP conn) throws Exception {
         int len = 0;
         byte[] buf = new byte[1000];
         boolean sended = false;
         boolean sendedb = false;
         int n = 0;
-        boolean msged = false;
         while ((len = tis.read(buf, 0, buf.length)) > 0) {
             readedLength += len;
             if (!sendedb) {
@@ -73,15 +50,7 @@ public class Pipe {
                 sendedb = true;
             }
             if (dstPort > 0) {
-                if (ClientUI.ui != null) {
-                    if (!msged) {
-                        msged = true;
-                        String msg = "端口" + dstPort + "连接成功";
-                        ClientUI.ui.setMessage(msg);
-                        ConsoleLogger.info(msg);
-                    }
-
-                }
+                ConsoleLogger.info("端口" + dstPort + "连接成功");
             }
             os.write(buf, 0, len);
             if (!sended) {
@@ -94,7 +63,6 @@ public class Pipe {
     public int getReadedLength() {
         return readedLength;
     }
-
 
     public void setDstPort(int dstPort) {
         this.dstPort = dstPort;

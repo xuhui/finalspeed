@@ -4,6 +4,10 @@ package net.fs.utils;
 
 public class ConsoleLogger {
 
+    private ConsoleLogger() {
+
+    }
+
     public static void info(String string) {
         System.out.println("INFO: " + string);
     }

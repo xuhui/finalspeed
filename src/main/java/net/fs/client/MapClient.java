@@ -2,7 +2,6 @@
 
 package net.fs.client;
 
-import net.fs.rudp.ClientProcessorInterface;
 import net.fs.rudp.Route;
 import net.fs.rudp.TrafficEvent;
 import net.fs.rudp.Trafficlistener;
@@ -12,7 +11,6 @@ import net.fs.utils.NetStatus;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.util.HashSet;
 
 public class MapClient implements Trafficlistener {
 
@@ -21,8 +19,6 @@ public class MapClient implements Trafficlistener {
     Route route_udp, route_tcp;
 
     short routePort = 45;
-
-    ClientUII ui;
 
     String serverAddress = "";
 
@@ -42,8 +38,6 @@ public class MapClient implements Trafficlistener {
 
     int connNum = 0;
 
-    HashSet<ClientProcessorInterface> processTable = new HashSet<ClientProcessorInterface>();
-
     Object syn_process = new Object();
 
     static MapClient mapClient;
@@ -54,8 +48,7 @@ public class MapClient implements Trafficlistener {
 
     boolean useTcp = true;
 
-    MapClient(ClientUI ui) throws Exception {
-        this.ui = ui;
+    MapClient(Client client) {
         mapClient = this;
         try {
             ServerSocket socket = new ServerSocket(monPort);
@@ -310,12 +303,6 @@ public class MapClient implements Trafficlistener {
         }
     }
 
-    public void onProcessClose(ClientProcessorInterface process) {
-        synchronized (syn_process) {
-            processTable.remove(process);
-        }
-    }
-
     public void close() {
         //closeAllProxyRequest();
         //poolManage.close();
@@ -395,18 +382,6 @@ public class MapClient implements Trafficlistener {
 
     public boolean isUseTcp() {
         return useTcp;
-    }
-
-    public void setUseTcp(boolean useTcp) {
-        this.useTcp = useTcp;
-    }
-
-    public ClientUII getUi() {
-        return ui;
-    }
-
-    public void setUi(ClientUII ui) {
-        this.ui = ui;
     }
 
 }

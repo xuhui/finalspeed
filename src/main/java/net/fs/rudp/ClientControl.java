@@ -21,14 +21,12 @@ public class ClientControl {
     public HashMap<Integer, ConnectionUDP> connTable = new HashMap<Integer, ConnectionUDP>();
     public ResendManage resendMange;
     int clientId;
-    Thread sendThread;
     Object synlock = new Object();
     HashMap<Integer, SendRecord> sendRecordTable_remote = new HashMap<Integer, SendRecord>();
     long startSendTime = 0;
     int maxSpeed = (int) (1024 * 1024);
     int initSpeed = (int) maxSpeed;
     int currentSpeed = initSpeed;
-    int lastTime = -1;
     Object syn_timeid = new Object();
     long sended = 0;
     long markTime = 0;
@@ -37,14 +35,10 @@ public class ClientControl {
     HashMap<Integer, Long> pingTable = new HashMap<>();
     int clientId_real = -1;
     long needSleep_All, trueSleep_All;
-    int maxAcked = 0;
-    long lastLockTime;
     Route route;
     InetAddress dstIp;
     int dstPort;
     Object syn_connTable = new Object();
-
-    Object syn_tunTable = new Object();
 
     String password;
     boolean closed = false;

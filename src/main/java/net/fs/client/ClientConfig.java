@@ -3,124 +3,33 @@
 package net.fs.client;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.ArrayList;
-
-// TODO: 7/19/2016 need to optimize use lombok
+@Getter
+@Setter
 public class ClientConfig {
 
     @JSONField(name = "server_address")
-    String serverAddress = "";
+    private String serverAddress;
 
     @JSONField(name = "server_port")
-    int serverPort;
+    private int serverPort;
 
-    int remotePort;
+    private int remotePort;
 
     @JSONField(name = "download_speed")
-    int downloadSpeed;
+    private int downloadSpeed;
     @JSONField(name = "upload_speed")
-    int uploadSpeed;
+    private int uploadSpeed;
 
-    boolean direct_cn = true;
+    private boolean direct_cn = true;
 
     @JSONField(name = "socks5_port")
-    int socks5Port = 1083;
+    private int socks5Port;
 
-    String remoteAddress;
+    private String remoteAddress;
 
-    String protocol = "tcp";
-
-    boolean autoStart = false;
-
-    ArrayList<String> recentAddressList = new ArrayList<String>();
-
-    public String getServerAddress() {
-        return serverAddress;
-    }
-
-    public void setServerAddress(String serverAddress) {
-        this.serverAddress = serverAddress;
-    }
-
-    public int getServerPort() {
-        return serverPort;
-    }
-
-    public void setServerPort(int serverPort) {
-        this.serverPort = serverPort;
-    }
-
-    public int getRemotePort() {
-        return remotePort;
-    }
-
-    public void setRemotePort(int remotePort) {
-        this.remotePort = remotePort;
-    }
-
-    public boolean isDirect_cn() {
-        return direct_cn;
-    }
-
-    public void setDirect_cn(boolean direct_cn) {
-        this.direct_cn = direct_cn;
-    }
-
-    public int getDownloadSpeed() {
-        return downloadSpeed;
-    }
-
-    public void setDownloadSpeed(int downloadSpeed) {
-        this.downloadSpeed = downloadSpeed;
-    }
-
-    public int getUploadSpeed() {
-        return uploadSpeed;
-    }
-
-    public void setUploadSpeed(int uploadSpeed) {
-        this.uploadSpeed = uploadSpeed;
-    }
-
-    public int getSocks5Port() {
-        return socks5Port;
-    }
-
-    public void setSocks5Port(int socks5Port) {
-        this.socks5Port = socks5Port;
-    }
-
-    public String getRemoteAddress() {
-        return remoteAddress;
-    }
-
-    public void setRemoteAddress(String remoteAddress) {
-        this.remoteAddress = remoteAddress;
-    }
-
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
-    }
-
-    public boolean isAutoStart() {
-        return autoStart;
-    }
-
-    public void setAutoStart(boolean autoStart) {
-        this.autoStart = autoStart;
-    }
-
-    public ArrayList<String> getRecentAddressList() {
-        return recentAddressList;
-    }
-
-    public void setRecentAddressList(ArrayList<String> recentAddressList) {
-        this.recentAddressList = recentAddressList;
-    }
+    private String protocol;
 
 }

@@ -2,48 +2,45 @@
 
 package net.fs.client;
 
-import java.io.Serializable;
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.net.ServerSocket;
 
-public class MapRule implements Serializable{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3504577683070928480L;
+public class MapRule {
 
-	int listen_port;
-	
-	int dst_port;
-		
-	String name;
-	
-	boolean using=false;
-	
-	ServerSocket serverSocket;
+    @JSONField(name = "listen_port")
+    int listenPort;
+    @JSONField(name = "dst_port")
+    int dstPort;
 
-	public int getListen_port() {
-		return listen_port;
-	}
+    String name;
 
-	public void setListen_port(int listen_port) {
-		this.listen_port = listen_port;
-	}
+    boolean using = false;
 
-	public int getDst_port() {
-		return dst_port;
-	}
+    ServerSocket serverSocket;
 
-	public void setDst_port(int dst_port) {
-		this.dst_port = dst_port;
-	}
+    public int getListenPort() {
+        return listenPort;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setListenPort(int listenPort) {
+        this.listenPort = listenPort;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
-	
+    public int getDstPort() {
+        return dstPort;
+    }
+
+    public void setDstPort(int dstPort) {
+        this.dstPort = dstPort;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
 }

@@ -24,11 +24,11 @@ public class VDatagramSocket extends DatagramSocket {
     private boolean tunConnecting = false;
 
     public VDatagramSocket() throws SocketException {
-
     }
 
+
     public void send(DatagramPacket p) throws IOException {
-        TCPTun tun = null;
+        TCPTun tun;
         if (isClient) {
             tun = capEnv.tcpManager.getDefaultTcpTun();
             if (tun != null) {

@@ -10,11 +10,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Random;
 
-public class PortMapProcess implements ClientProcessorInterface {
-
-    Random ran = new Random();
+public class PortMapProcess {
 
     UDPInputStream tis;
 
@@ -28,7 +25,7 @@ public class PortMapProcess implements ClientProcessorInterface {
 
     MapClient mapClient;
 
-    public Socket srcSocket, dstSocket;
+    public Socket srcSocket;
 
     DataInputStream srcIs = null;
     DataOutputStream srcOs = null;
@@ -53,7 +50,7 @@ public class PortMapProcess implements ClientProcessorInterface {
 
             JSONObject requestJson = new JSONObject();
             requestJson.put("dst_address", dstAddress);
-            requestJson.put("dst_port", dstPort);
+            requestJson.put("dstPort", dstPort);
             byte[] requestData = requestJson.toJSONString().getBytes("utf-8");
 
             tos.write(requestData, 0, requestData.length);
@@ -68,7 +65,6 @@ public class PortMapProcess implements ClientProcessorInterface {
             String hs = new String(responeData, "utf-8");
             JSONObject responeJSon = JSONObject.parseObject(hs);
             int code = responeJSon.getIntValue("code");
-            String message = responeJSon.getString("message");
             String uimessage = "";
             if (code == Constant.code_success) {
 
@@ -88,7 +84,6 @@ public class PortMapProcess implements ClientProcessorInterface {
                                 //String msg="fs服务连接成功,加速端口"+dstPort+"连接失败1";
                                 String msg = "端口" + dstPort + "无返回数据";
                                 ConsoleLogger.info(msg);
-                                ClientUI.ui.setMessage(msg);
                             }
                         }
                     }
@@ -110,19 +105,14 @@ public class PortMapProcess implements ClientProcessorInterface {
 
                 });
                 success = true;
-                uimessage = ("fs服务连接成功");
-                ClientUI.ui.setMessage(uimessage);
+                ConsoleLogger.info("fs服务连接成功");
             } else {
                 close();
-                uimessage = "fs服务连接成功,端口" + dstPort + "连接失败2";
-                ClientUI.ui.setMessage(uimessage);
-                ConsoleLogger.info(uimessage);
+                ConsoleLogger.info("fs服务连接成功,端口" + dstPort + "连接失败2");
             }
         } catch (Exception e1) {
             e1.printStackTrace();
-            String msg = "fs服务连接失败!";
-            ClientUI.ui.setMessage(msg);
-            ConsoleLogger.info(msg);
+            ConsoleLogger.error("fs服务连接失败!");
         }
 
     }
@@ -160,17 +150,7 @@ public class PortMapProcess implements ClientProcessorInterface {
                     e.printStackTrace();
                 }
             }
-            mapClient.onProcessClose(this);
-
         }
     }
 
-    @Override
-    public void onMapClientClose() {
-        try {
-            srcSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

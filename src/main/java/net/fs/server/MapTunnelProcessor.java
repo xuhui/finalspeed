@@ -50,8 +50,7 @@ public class MapTunnelProcessor implements ConnectionProcessor {
             final int dstPort = requestJSon.getIntValue("dst_port");
             String message = "";
             JSONObject responeJSon = new JSONObject();
-            int code = Constant.code_failed;
-            code = Constant.code_success;
+            int code = Constant.code_success;
             responeJSon.put("code", code);
             responeJSon.put("message", message);
             byte[] responeData = responeJSon.toJSONString().getBytes("utf-8");
@@ -72,7 +71,7 @@ public class MapTunnelProcessor implements ConnectionProcessor {
                 try {
                     p1.pipe(sis, tos, 100 * 1024, p2);
                 } catch (Exception e) {
-                    //e.printStackTrace();
+                    e.printStackTrace();
                 } finally {
                     close();
                     if (p1.getReadedLength() == 0) {
@@ -84,7 +83,7 @@ public class MapTunnelProcessor implements ConnectionProcessor {
                 try {
                     p2.pipe(tis, sos, 100 * 1024 * 1024, conn);
                 } catch (Exception e) {
-                    //e.printStackTrace();
+                    e.printStackTrace();
                 } finally {
                     close();
                 }
