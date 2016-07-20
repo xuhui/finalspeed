@@ -31,7 +31,7 @@ public class DataMessage extends Message {
                        int connectId, int clientId) {
         this.sequence = sequence;
         this.offset = offset;
-        this.length = (short) (length);
+        this.length = length;
         this.data = new byte[this.length];
         this.clientId = clientId;
         this.connectId = connectId;

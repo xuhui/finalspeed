@@ -12,10 +12,11 @@ public class PingMessage extends Message {
 
     public short sType = net.fs.rudp.message.MessageType.sType_PingMessage;
 
-    byte[] dpData = new byte[20];
+    private byte[] dpData = new byte[20];
 
-    int pingId;
-    int downloadSpeed, uploadSpeed;
+    private int pingId;
+    private int downloadSpeed;
+    private int uploadSpeed;
 
     public PingMessage(int connectId, int clientId, int pingId, int downloadSpeed, int uploadSpeed) {
         ByteShortConvert.toByteArray(ver, dpData, 0);  //add: ver
@@ -44,24 +45,8 @@ public class PingMessage extends Message {
         return pingId;
     }
 
-    public void setPingId(int pingId) {
-        this.pingId = pingId;
-    }
-
     public int getDownloadSpeed() {
         return downloadSpeed;
-    }
-
-    public void setDownloadSpeed(int downloadSpeed) {
-        this.downloadSpeed = downloadSpeed;
-    }
-
-    public int getUploadSpeed() {
-        return uploadSpeed;
-    }
-
-    public void setUploadSpeed(int uploadSpeed) {
-        this.uploadSpeed = uploadSpeed;
     }
 
 }

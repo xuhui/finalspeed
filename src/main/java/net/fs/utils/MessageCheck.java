@@ -14,7 +14,7 @@ public class MessageCheck {
         return ByteShortConvert.toShort(dp.getData(), 0);
     }
 
-    public static int checkSType(DatagramPacket dp) {
+    public static short checkSType(DatagramPacket dp) {
         return ByteShortConvert.toShort(dp.getData(), 2);
     }
 

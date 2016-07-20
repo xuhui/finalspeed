@@ -17,7 +17,6 @@ public class AckListMessage extends Message {
 
     int r1, r2, r3, s1, s2, s3;
 
-    @SuppressWarnings("unchecked")
     public AckListMessage(long connId, ArrayList ackList, int lastRead,
                           HashMap<Integer, SendRecord> sendRecordTable, int timeId,
                           int connectId, int clientId) {

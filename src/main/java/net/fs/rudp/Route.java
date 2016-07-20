@@ -35,6 +35,8 @@ public class Route {
     //todo need to optimize
     public static ThreadPoolExecutor executor = new ThreadPoolExecutor(100, Integer.MAX_VALUE, 10 * 1_000, TimeUnit.MILLISECONDS, new SynchronousQueue());
 
+    private boolean tcp = true;
+
     public static int localDownloadSpeed, localUploadSpeed;
 
     //todo need to optimize
@@ -44,7 +46,6 @@ public class Route {
     public AckListManage delayAckManage;
     public CapEnv capEnv = null;
     public ClientControl lastClientControl;
-    public boolean useTcpTun = true;
     Object syn_ds2Table = new Object();
     Random ran = new Random();
     public int localclientId = Math.abs(ran.nextInt());
@@ -60,8 +61,9 @@ public class Route {
 
     public Route(short routePort, int mode, boolean tcp) {
         this.mode = mode;
-        useTcpTun = tcp;
-        if (useTcpTun) {
+        this.tcp = tcp;
+
+        if (this.tcp) {
             if (this.mode == MODE_SERVER) {
                 //服务端
                 VDatagramSocket d = null;
@@ -125,7 +127,7 @@ public class Route {
                 DatagramPacket dp = new DatagramPacket(b, b.length);
                 try {
                     datagramSocket.receive(dp);
-                    //MLog.info("接收 "+dp.getAddress());
+                    ConsoleLogger.info("receive from ip: " + dp.getAddress());
                     packetQueue.add(dp);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -150,16 +152,15 @@ public class Route {
                     return;
                 }
 
-                //todo need optimize int to short
-                int sType = MessageCheck.checkSType(dp);
+                short sType = MessageCheck.checkSType(dp);
 
-                //MLog.info("route receive MessageType111#"+sType+" "+dp.getAddress()+":"+dp.getPort());
+                ConsoleLogger.info("route receive MessageType:" + sType + " ip:" + dp.getAddress() + ":" + dp.getPort());
 
-                final int connectId = ByteIntConvert.toInt(dpData, 4);
+                int connectId = ByteIntConvert.toInt(dpData, 4);
                 int remote_clientId = ByteIntConvert.toInt(dpData, 8);
 
                 if (closedTable.contains(connectId) && connectId != 0) {
-                    //#MLog.info("忽略已关闭连接包 "+connectId);
+                    ConsoleLogger.info("忽略已关闭连接包 " + connectId);
                     continue;
                 }
 
@@ -193,7 +194,6 @@ public class Route {
                             setedTable.add(remote_clientId);
                         }
                     }
-
 
                     //udp connection
                     if (Route.this.mode == Route.MODE_SERVER) {
@@ -234,7 +234,6 @@ public class Route {
             }
         }
     }
-
 
     public void sendPacket(DatagramPacket dp) throws IOException {
         datagramSocket.send(dp);
@@ -278,14 +277,12 @@ public class Route {
         return conn;
     }
 
-    public boolean isUseTcpTun() {
-        return useTcpTun;
+    public boolean isTcp() {
+        return tcp;
     }
 
-    public void setUseTcpTun(boolean useTcpTun) {
-        this.useTcpTun = useTcpTun;
+    public void setTcp(boolean tcp) {
+        this.tcp = tcp;
     }
 
 }
-
-

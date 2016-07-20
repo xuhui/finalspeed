@@ -56,7 +56,7 @@ public class ClientControl {
     }
 
     public void onReceivePacket(DatagramPacket dp) {
-        int sType = MessageCheck.checkSType(dp);
+        short sType = MessageCheck.checkSType(dp);
         if (sType == net.fs.rudp.message.MessageType.sType_PingMessage) {
             PingMessage pm = new PingMessage(dp);
             sendPingMessage2(pm.getPingId(), dp.getAddress(), dp.getPort());
@@ -67,8 +67,8 @@ public class ClientControl {
             Long t = pingTable.get(pm.getPingId());
             if (t != null) {
                 pingDelay = (int) (System.currentTimeMillis() - t);
-                String protocal = "";
-                if (route.isUseTcpTun()) {
+                String protocal;
+                if (route.isTcp()) {
                     protocal = "tcp";
                 } else {
                     protocal = "udp";
