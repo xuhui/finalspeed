@@ -2,9 +2,6 @@ package net.fs.utils;
 
 import org.apache.commons.lang3.SystemUtils;
 
-import java.util.List;
-import java.util.Optional;
-
 /**
  * Created by Poison on 2016/7/11.
  */
@@ -30,11 +27,8 @@ public class FireWallUtil {
     }
 
     private static void clearUdpRuleOnLinux() {
-        Optional<List<String>> lines = Command.executeShellAndGetLines("iptables -L -n --line-numbers | grep black_envelope_udp");
-        if (lines.isPresent()) {
-            for (String line : lines.get()) {
-                Command.execute("iptables -D INPUT " + getRuleNumberFromLine(line));
-            }
+        for (String line : Command.executeShellAndGetLines("iptables -L -n --line-numbers | grep black_envelope_udp")) {
+            Command.execute("iptables -D INPUT " + getRuleNumberFromLine(line));
         }
     }
 
@@ -65,11 +59,8 @@ public class FireWallUtil {
     }
 
     private static void clearTcpRuleOnLinux() {
-        Optional<List<String>> lines = Command.executeShellAndGetLines("iptables -L -n --line-numbers | grep black_envelope_tcp");
-        if (lines.isPresent()) {
-            for (String line : lines.get()) {
-                Command.execute("iptables -D INPUT " + getRuleNumberFromLine(line));
-            }
+        for (String line : Command.executeShellAndGetLines("iptables -L -n --line-numbers | grep black_envelope_tcp")) {
+            Command.execute("iptables -D INPUT " + getRuleNumberFromLine(line));
         }
     }
 

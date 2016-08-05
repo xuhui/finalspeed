@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by Poison on 7/11/2016.
@@ -39,7 +38,7 @@ public class Command {
         }
     }
 
-    public static Optional<List<String>> executeShellAndGetLines(String command) {
+    public static List<String> executeShellAndGetLines(String command) {
 
         List<String> lines = new ArrayList<>();
 
@@ -64,12 +63,7 @@ public class Command {
             System.exit(-1);
         }
 
-        if (lines.size() == 0) {
-            return Optional.empty();
-        } else {
-            return Optional.of(lines);
-        }
-
+        return lines;
     }
 
 }
