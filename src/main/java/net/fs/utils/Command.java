@@ -1,7 +1,5 @@
 package net.fs.utils;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,10 +24,10 @@ public class Command {
             try (BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream())); BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
                 String line;
 
-                while (StringUtils.isNotBlank(line = stdInput.readLine())) {
+                while ((line = stdInput.readLine()) != null) {
                     ConsoleLogger.info(line);
                 }
-                while (StringUtils.isNotBlank(line = stdError.readLine())) {
+                while ((line = stdError.readLine()) != null) {
                     ConsoleLogger.info(line);
                 }
             }
@@ -50,11 +48,11 @@ public class Command {
 
             try (BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream())); BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
                 String line;
-                while (StringUtils.isNotBlank(line = stdInput.readLine())) {
+                while ((line = stdInput.readLine()) != null) {
                     ConsoleLogger.info(line);
                     lines.add(line);
                 }
-                while (StringUtils.isNotBlank(line = stdError.readLine())) {
+                while ((line = stdError.readLine()) != null) {
                     ConsoleLogger.info(line);
                     lines.add(line);
                 }
